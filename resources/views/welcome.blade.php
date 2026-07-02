@@ -100,7 +100,7 @@
     <section class="py-6 bg-light" style="padding: 80px 0;">
         <div class="container">
             <h2 class="text-center fw-bold mb-2">¿Por qué Canchaya?</h2>
-            <p class="text-center text-muted mb-5">Todo lo que necesitas la comodidad de tu casa</p>
+            <p class="text-center text-muted mb-5">Todo lo que necesitas desde la comodidad de tu casa</p>
 
             <div class="row g-4">
                 <div class="col-md-4">
