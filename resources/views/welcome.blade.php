@@ -76,22 +76,34 @@
     <section class="hero d-flex align-items-center text-white">
         <div class="container text-center py-5">
             <p class="text-uppercase fw-semibold mb-2 text-verde">
-                <i class="bi bi-geo-alt me-1"></i> La mejor opcion a tu alcance
+                <i class="bi bi-geo-alt me-1"></i> La mejor plataforma de reservas
             </p>
             <h1 class="hero-title mb-4">
                 Reserva tu cancha <br>
-                <span class="text-verde">desde casa</span>
+                <span class="text-verde">en segundos</span>
             </h1>
             <p class="lead text-white-50 mb-5 mx-auto" style="max-width: 500px;">
                 Encuentra disponibilidad en tiempo real, elige tu horario y paga fácilmente.
             </p>
             <div class="d-flex justify-content-center gap-3">
-                <a href="{{ route('register') }}" class="btn btn-verde btn-lg px-5">
-                    <i class="bi bi-lightning-charge me-2"></i>Reservar ahora
-                </a>
-                <a href="{{ route('login') }}" class="btn btn-outline-light btn-lg px-5">
-                    <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar sesión
-                </a>
+                @auth
+                    @if(auth()->user()->role === 'admin')
+                        <a href="{{ route('admin.dashboard') }}" class="btn btn-verde btn-lg px-5">
+                            <i class="bi bi-speedometer2 me-2"></i>Ir al panel
+                        </a>
+                    @else
+                        <a href="{{ route('client.reservations.create') }}" class="btn btn-verde btn-lg px-5">
+                            <i class="bi bi-lightning-charge me-2"></i>Reservar ahora
+                        </a>
+                    @endif
+                @else
+                    <a href="{{ route('register') }}" class="btn btn-verde btn-lg px-5">
+                        <i class="bi bi-lightning-charge me-2"></i>Reservar ahora
+                    </a>
+                    <a href="{{ route('login') }}" class="btn btn-outline-light btn-lg px-5">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar sesión
+                    </a>
+                @endauth
             </div>
         </div>
     </section>
@@ -100,7 +112,7 @@
     <section class="py-6 bg-light" style="padding: 80px 0;">
         <div class="container">
             <h2 class="text-center fw-bold mb-2">¿Por qué Canchaya?</h2>
-            <p class="text-center text-muted mb-5">Todo lo que necesitas desde la comodidad de tu casa</p>
+            <p class="text-center text-muted mb-5">Todo lo que necesitas para reservar en un solo lugar</p>
 
             <div class="row g-4">
                 <div class="col-md-4">
