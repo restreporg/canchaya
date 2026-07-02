@@ -7,6 +7,7 @@ use App\Http\Requests\Client\StoreReservationRequest;
 use App\Models\Court;
 use App\Models\Reservation;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class ReservationController extends Controller
@@ -22,10 +23,23 @@ class ReservationController extends Controller
         return view('client.reservations.index', compact('reservations'));
     }
 
-    public function create()
+    public function create(Request $request)
     {
-        $courts = Court::where('is_active', true)->get();
-        return view('client.reservations.create', compact('courts'));
+        $tipos = Court::where('is_active', true)
+            ->distinct()
+            ->pluck('type');
+
+        $ubicaciones = Court::where('is_active', true)
+            ->whereNotNull('location')
+            ->distinct()
+            ->pluck('location');
+
+        $courts = Court::where('is_active', true)
+            ->when($request->type, fn($q) => $q->where('type', $request->type))
+            ->when($request->location, fn($q) => $q->where('location', $request->location))
+            ->get();
+
+        return view('client.reservations.create', compact('courts', 'tipos', 'ubicaciones'));
     }
 
     public function store(StoreReservationRequest $request)
