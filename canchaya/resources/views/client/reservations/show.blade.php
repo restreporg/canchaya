@@ -1,0 +1,150 @@
+@extends('layouts.client')
+@section('title', 'Detalle de Reserva')
+
+@section('body')
+
+    <div class="mb-4">
+        <a href="{{ route('client.reservations.index') }}" class="btn btn-sm btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Mis reservas
+        </a>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm mb-3">
+                <div class="card-header bg-white fw-semibold">
+                    <i class="bi bi-calendar-check me-2"></i>Reserva #{{ $reservation->id }}
+                </div>
+                <div class="card-body">
+                    <table class="table table-sm table-borderless mb-0">
+                        <tr>
+                            <td class="text-muted" style="width:40%">Cancha</td>
+                            <td class="fw-semibold">{{ $reservation->court->name ?? '-' }}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">Tipo</td>
+                            <td>{{ $reservation->court->type ?? '-' }}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">Inicio</td>
+                            <td>{{ $reservation->start_datetime->format('d/m/Y H:i') }}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">Fin</td>
+                            <td>{{ $reservation->end_datetime->format('d/m/Y H:i') }}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">Total</td>
+                            <td class="fw-bold fs-5">${{ number_format($reservation->total_price, 2) }}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">Estado</td>
+                            <td>
+                                @php
+                                    $colors = ['pendiente'=>'warning','confirmada'=>'success','cancelada'=>'secondary','completada'=>'info'];
+                                    $color = $colors[$reservation->status] ?? 'secondary';
+                                @endphp
+                                <span class="badge bg-{{ $color }}">{{ ucfirst($reservation->status) }}</span>
+                            </td>
+                        </tr>
+                    </table>
+
+                    @if($reservation->status === 'pendiente')
+                        <hr>
+                        <form action="{{ route('client.reservations.destroy', $reservation) }}"
+                              method="POST" onsubmit="return confirm('¿Cancelar esta reserva?')">
+                            @csrf @method('DELETE')
+                            <button class="btn btn-sm btn-outline-danger">
+                                <i class="bi bi-x-circle me-1"></i> Cancelar reserva
+                            </button>
+                        </form>
+                    @endif
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white fw-semibold">
+                    <i class="bi bi-credit-card me-2"></i>Pago
+                </div>
+                <div class="card-body">
+                    @if($reservation->payment)
+                        <p class="mb-1">Método: <strong>{{ ucfirst($reservation->payment->method) }}</strong></p>
+                        <p class="mb-0">Estado: <span class="badge bg-success">{{ ucfirst($reservation->payment->status) }}</span></p>
+                    @elseif($reservation->status !== 'cancelada')
+                        <p class="text-muted mb-3">No se ha registrado pago aún.</p>
+                        <form action="{{ route('client.payments.store', $reservation) }}" method="POST">
+                            @csrf
+                            <div class="input-group">
+                                <select name="method" class="form-select @error('method') is-invalid @enderror">
+                                    <option value="efectivo">Efectivo</option>
+                                    <option value="tarjeta">Tarjeta</option>
+                                    <option value="transferencia">Transferencia</option>
+                                </select>
+                                <button class="btn btn-success" type="submit">Pagar</button>
+                            </div>
+                            @error('method')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
+                            @error('payment')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
+                        </form>
+                    @else
+                        <p class="text-muted mb-0">Reserva cancelada.</p>
+                    @endif
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white fw-semibold">
+                    <i class="bi bi-star me-2"></i>Reseña
+                </div>
+                <div class="card-body">
+                    @if($reservation->review)
+                        <div class="mb-2">
+                            @for($i = 1; $i <= 5; $i++)
+                                <i class="bi bi-star{{ $i <= $reservation->review->rating ? '-fill' : '' }} text-warning fs-5"></i>
+                            @endfor
+                        </div>
+                        <p class="text-muted mb-3">{{ $reservation->review->comment ?? 'Sin comentario.' }}</p>
+                        <form action="{{ route('client.reviews.destroy', $reservation->review) }}"
+                              method="POST" onsubmit="return confirm('¿Eliminar tu reseña?')">
+                            @csrf @method('DELETE')
+                            <button class="btn btn-sm btn-outline-danger">
+                                <i class="bi bi-trash me-1"></i> Eliminar reseña
+                            </button>
+                        </form>
+                    @elseif($reservation->status === 'completada')
+                        <p class="text-muted mb-3">Deja tu opinión sobre la cancha.</p>
+                        <form action="{{ route('client.reviews.store', $reservation) }}" method="POST">
+                            @csrf
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Calificación</label>
+                                <select name="rating" class="form-select @error('rating') is-invalid @enderror">
+                                    @for($i = 5; $i >= 1; $i--)
+                                        <option value="{{ $i }}" {{ old('rating') == $i ? 'selected' : '' }}>
+                                            {{ $i }} estrella{{ $i > 1 ? 's' : '' }}
+                                        </option>
+                                    @endfor
+                                </select>
+                                @error('rating')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Comentario <span class="text-muted fw-normal">(opcional)</span></label>
+                                <textarea name="comment" rows="3"
+                                          class="form-control @error('comment') is-invalid @enderror"
+                                          placeholder="¿Cómo fue tu experiencia?">{{ old('comment') }}</textarea>
+                                @error('comment')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                            </div>
+                            @error('review')<div class="text-danger small mb-2">{{ $message }}</div>@enderror
+                            <button type="submit" class="btn btn-warning w-100">
+                                <i class="bi bi-star me-1"></i> Enviar reseña
+                            </button>
+                        </form>
+                    @else
+                        <p class="text-muted mb-0">Podrás dejar una reseña cuando la reserva esté completada.</p>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+
+@endsection
