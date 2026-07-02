@@ -14,6 +14,18 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'isAdmin' => \App\Http\Middleware\IsAdmin::class,
         ]);
+
+        $middleware->redirectGuestsTo('/login');
+
+        $middleware->redirectUsersTo(function () {
+            if (auth()->check()) {
+                if (auth()->user()->role === 'admin') {
+                    return route('admin.dashboard');
+                }
+                return route('client.reservations.index');
+            }
+            return '/';
+        });
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
