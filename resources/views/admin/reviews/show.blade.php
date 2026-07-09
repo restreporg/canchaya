@@ -4,12 +4,12 @@
 @section('body')
 
     <div class="mb-4">
-        <a href="{{ route('admin.reviews.index') }}" class="btn btn-sm btn-outline-secondary">
+        <a href="{{ route('admin.reviews.index') }}" class="btn btn-sm btn-outline-secondary btn-pill px-3">
             <i class="bi bi-arrow-left me-1"></i> Volver
         </a>
     </div>
 
-    <div class="card border-0 shadow-sm" style="max-width: 560px;">
+    <div class="card border-0 shadow-sm card-soft" style="max-width: 560px;">
         <div class="card-body">
             <div class="mb-3">
                 @for($i = 1; $i <= 5; $i++)
@@ -40,7 +40,7 @@
             <form action="{{ route('admin.reviews.destroy', $review) }}" method="POST"
                   onsubmit="return confirm('¿Eliminar esta reseña?')">
                 @csrf @method('DELETE')
-                <button class="btn btn-danger btn-sm">
+                <button class="btn btn-danger btn-sm btn-pill px-3">
                     <i class="bi bi-trash me-1"></i> Eliminar reseña
                 </button>
             </form>

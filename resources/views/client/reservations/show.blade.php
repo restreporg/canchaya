@@ -1,18 +1,37 @@
 @extends('layouts.client')
 @section('title', 'Detalle de Reserva')
 
+@push('styles')
+<style>
+    /* Mismos badges pastel que en "Mis Reservas", para consistencia visual */
+    .badge-pill-soft {
+        border-radius: 999px;
+        font-weight: 600;
+        padding: .4em .9em;
+    }
+    .status-pendiente  { background: #fff6e0; color: #d99a00; }
+    .status-confirmada { background: #e6f9ee; color: #178a45; }
+    .status-cancelada  { background: #f1f2f3; color: #6c757d; }
+    .status-completada { background: #e8f0ff; color: #2563eb; }
+    .status-pagado      { background: #e6f9ee; color: #178a45; }
+
+    .card-soft { border-radius: 14px; }
+    .btn-pill  { border-radius: 999px; }
+</style>
+@endpush
+
 @section('body')
 
     <div class="mb-4">
-        <a href="{{ route('client.reservations.index') }}" class="btn btn-sm btn-outline-secondary">
+        <a href="{{ route('client.reservations.index') }}" class="btn btn-sm btn-outline-secondary btn-pill px-3">
             <i class="bi bi-arrow-left me-1"></i> Mis reservas
         </a>
     </div>
 
     <div class="row g-4">
         <div class="col-md-6">
-            <div class="card border-0 shadow-sm mb-3">
-                <div class="card-header bg-white fw-semibold">
+            <div class="card border-0 shadow-sm mb-3 card-soft">
+                <div class="card-header bg-white fw-semibold border-0 pt-3">
                     <i class="bi bi-calendar-check me-2"></i>Reserva #{{ $reservation->id }}
                 </div>
                 <div class="card-body">
@@ -35,16 +54,12 @@
                         </tr>
                         <tr>
                             <td class="text-muted">Total</td>
-                            <td class="fw-bold fs-5">${{ number_format($reservation->total_price, 2) }}</td>
+                            <td class="fw-bold fs-5 text-primary">${{ number_format($reservation->total_price, 2) }}</td>
                         </tr>
                         <tr>
                             <td class="text-muted">Estado</td>
                             <td>
-                                @php
-                                    $colors = ['pendiente'=>'warning','confirmada'=>'success','cancelada'=>'secondary','completada'=>'info'];
-                                    $color = $colors[$reservation->status] ?? 'secondary';
-                                @endphp
-                                <span class="badge bg-{{ $color }}">{{ ucfirst($reservation->status) }}</span>
+                                <span class="badge badge-pill-soft status-{{ $reservation->status }}">{{ ucfirst($reservation->status) }}</span>
                             </td>
                         </tr>
                     </table>
@@ -54,7 +69,7 @@
                         <form action="{{ route('client.reservations.destroy', $reservation) }}"
                               method="POST" onsubmit="return confirm('¿Cancelar esta reserva?')">
                             @csrf @method('DELETE')
-                            <button class="btn btn-sm btn-outline-danger">
+                            <button class="btn btn-sm btn-outline-danger btn-pill px-3">
                                 <i class="bi bi-x-circle me-1"></i> Cancelar reserva
                             </button>
                         </form>
@@ -62,14 +77,14 @@
                 </div>
             </div>
 
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white fw-semibold">
+            <div class="card border-0 shadow-sm card-soft">
+                <div class="card-header bg-white fw-semibold border-0 pt-3">
                     <i class="bi bi-credit-card me-2"></i>Pago
                 </div>
                 <div class="card-body">
                     @if($reservation->payment)
                         <p class="mb-1">Método: <strong>{{ ucfirst($reservation->payment->method) }}</strong></p>
-                        <p class="mb-0">Estado: <span class="badge bg-success">{{ ucfirst($reservation->payment->status) }}</span></p>
+                        <p class="mb-0">Estado: <span class="badge badge-pill-soft status-pagado">{{ ucfirst($reservation->payment->status) }}</span></p>
                     @elseif($reservation->status !== 'cancelada')
                         <p class="text-muted mb-3">No se ha registrado pago aún.</p>
                         <form action="{{ route('client.payments.store', $reservation) }}" method="POST">
@@ -80,7 +95,7 @@
                                     <option value="tarjeta">Tarjeta</option>
                                     <option value="transferencia">Transferencia</option>
                                 </select>
-                                <button class="btn btn-success" type="submit">Pagar</button>
+                                <button class="btn btn-success btn-pill" type="submit">Pagar</button>
                             </div>
                             @error('method')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
                             @error('payment')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
@@ -93,8 +108,8 @@
         </div>
 
         <div class="col-md-6">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white fw-semibold">
+            <div class="card border-0 shadow-sm card-soft">
+                <div class="card-header bg-white fw-semibold border-0 pt-3">
                     <i class="bi bi-star me-2"></i>Reseña
                 </div>
                 <div class="card-body">
@@ -108,7 +123,7 @@
                         <form action="{{ route('client.reviews.destroy', $reservation->review) }}"
                               method="POST" onsubmit="return confirm('¿Eliminar tu reseña?')">
                             @csrf @method('DELETE')
-                            <button class="btn btn-sm btn-outline-danger">
+                            <button class="btn btn-sm btn-outline-danger btn-pill px-3">
                                 <i class="bi bi-trash me-1"></i> Eliminar reseña
                             </button>
                         </form>
@@ -135,7 +150,7 @@
                                 @error('comment')<div class="invalid-feedback">{{ $message }}</div>@enderror
                             </div>
                             @error('review')<div class="text-danger small mb-2">{{ $message }}</div>@enderror
-                            <button type="submit" class="btn btn-warning w-100">
+                            <button type="submit" class="btn btn-warning w-100 btn-pill">
                                 <i class="bi bi-star me-1"></i> Enviar reseña
                             </button>
                         </form>

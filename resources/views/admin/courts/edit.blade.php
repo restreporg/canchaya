@@ -7,8 +7,8 @@
     <div class="row justify-content-center">
         <div class="col-md-7">
 
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-white py-3">
+            <div class="card shadow-sm border-0 card-soft">
+                <div class="card-header bg-white py-3 border-0">
                     <h6 class="mb-0 fw-bold">
                         <i class="bi bi-pencil me-2 text-warning"></i>Editar cancha — {{ $court->name }}
                     </h6>
@@ -79,7 +79,7 @@
                             @if($court->image)
                                 <div class="mb-2">
                                     <img src="{{ Storage::url($court->image) }}" alt="Imagen actual"
-                                         class="img-thumbnail d-block" style="max-height: 200px;">
+                                         class="img-thumbnail d-block" style="max-height: 200px; border-radius: 10px;">
                                     <p class="text-muted small mt-1">Imagen actual. Sube una nueva para reemplazarla.</p>
                                 </div>
                             @endif
@@ -91,7 +91,7 @@
                             @enderror
                             <div id="preview" class="mt-2 d-none">
                                 <img id="previewImg" src="" alt="Preview"
-                                     class="img-thumbnail" style="max-height: 200px;">
+                                     class="img-thumbnail" style="max-height: 200px; border-radius: 10px;">
                             </div>
                         </div>
 
@@ -104,10 +104,10 @@
                         </div>
 
                         <div class="d-flex justify-content-between">
-                            <a href="{{ route('admin.courts.index') }}" class="btn btn-outline-secondary">
+                            <a href="{{ route('admin.courts.index') }}" class="btn btn-outline-secondary btn-pill px-3">
                                 <i class="bi bi-arrow-left me-1"></i> Volver
                             </a>
-                            <button type="submit" class="btn btn-warning">
+                            <button type="submit" class="btn btn-warning btn-pill px-4">
                                 <i class="bi bi-save me-1"></i> Actualizar cancha
                             </button>
                         </div>
@@ -119,7 +119,7 @@
                         <form action="{{ route('admin.courts.image.destroy', $court) }}" method="POST"
                               class="mt-3" onsubmit="return confirm('¿Eliminar imagen?')">
                             @csrf @method('DELETE')
-                            <button class="btn btn-sm btn-outline-danger">
+                            <button class="btn btn-sm btn-outline-danger btn-pill px-3">
                                 <i class="bi bi-trash me-1"></i> Eliminar imagen actual
                             </button>
                         </form>

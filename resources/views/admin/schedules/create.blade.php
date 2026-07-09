@@ -4,12 +4,12 @@
 @section('body')
 
     <div class="mb-4">
-        <a href="{{ route('admin.courts.schedules.index', $court) }}" class="btn btn-sm btn-outline-secondary">
+        <a href="{{ route('admin.courts.schedules.index', $court) }}" class="btn btn-sm btn-outline-secondary btn-pill px-3">
             <i class="bi bi-arrow-left me-1"></i> Volver
         </a>
     </div>
 
-    <div class="card border-0 shadow-sm" style="max-width: 480px;">
+    <div class="card border-0 shadow-sm card-soft" style="max-width: 480px;">
         <div class="card-body">
             <form action="{{ route('admin.courts.schedules.store', $court) }}" method="POST">
                 @csrf
@@ -40,7 +40,7 @@
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-primary w-100">
+                <button type="submit" class="btn btn-primary btn-pill w-100">
                     <i class="bi bi-save me-1"></i> Guardar horario
                 </button>
             </form>

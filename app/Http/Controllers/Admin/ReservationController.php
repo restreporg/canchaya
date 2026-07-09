@@ -12,7 +12,9 @@ class ReservationController extends Controller
     {
         $reservations = Reservation::with(['user', 'court'])
             ->orderBy('start_datetime', 'desc')
-            ->get();
+            ->paginate(15)
+            ->withQueryString();
+
         return view('admin.reservations.index', compact('reservations'));
     }
 

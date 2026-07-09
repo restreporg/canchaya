@@ -12,7 +12,9 @@ class PaymentController extends Controller
     {
         $payments = Payment::with(['user', 'reservation.court'])
             ->orderBy('created_at', 'desc')
-            ->get();
+            ->paginate(15)
+            ->withQueryString();
+
         return view('admin.payments.index', compact('payments'));
     }
 

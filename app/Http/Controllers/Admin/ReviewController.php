@@ -13,7 +13,9 @@ class ReviewController extends Controller
     {
         $reviews = Review::with(['user', 'reservation.court'])
             ->orderBy('created_at', 'desc')
-            ->get();
+            ->paginate(15)
+            ->withQueryString();
+
         return view('admin.reviews.index', compact('reviews'));
     }
 
@@ -29,6 +31,6 @@ class ReviewController extends Controller
     {
         $review->delete();
         return redirect()->route('admin.reviews.index')
-                         ->with('success', 'Reseña eliminada.');
+            ->with('success', 'Reseña eliminada.');
     }
 }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Court;
 use App\Models\Schedule;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class ScheduleController extends Controller
 {
@@ -22,13 +23,19 @@ class ScheduleController extends Controller
 
     public function store(Request $request, Court $court)
     {
-        $request->validate([
-            'day_of_week' => 'required|integer|between:0,6',
+        $validated = $request->validate([
+            'day_of_week' => [
+                'required', 'integer', 'between:0,6',
+                Rule::unique('schedules')->where('court_id', $court->id),
+            ],
             'open_time'   => 'required|date_format:H:i',
             'close_time'  => 'required|date_format:H:i|after:open_time',
+        ], [
+            'day_of_week.unique' => 'Esta cancha ya tiene un horario configurado para ese día.',
         ]);
 
-        $court->schedules()->create($request->all());
+        $court->schedules()->create($validated);
+
         return redirect()->route('admin.courts.schedules.index', $court)
                          ->with('success', 'Horario agregado.');
     }
@@ -40,12 +47,13 @@ class ScheduleController extends Controller
 
     public function update(Request $request, Court $court, Schedule $schedule)
     {
-        $request->validate([
+        $validated = $request->validate([
             'open_time'  => 'required|date_format:H:i',
             'close_time' => 'required|date_format:H:i|after:open_time',
         ]);
 
-        $schedule->update($request->all());
+        $schedule->update($validated);
+
         return redirect()->route('admin.courts.schedules.index', $court)
                          ->with('success', 'Horario actualizado.');
     }

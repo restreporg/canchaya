@@ -6,8 +6,8 @@
     <div class="row justify-content-center">
         <div class="col-md-7">
 
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-white py-3">
+            <div class="card shadow-sm border-0 card-soft">
+                <div class="card-header bg-white py-3 border-0">
                     <h6 class="mb-0 fw-bold">
                         <i class="bi bi-plus-circle me-2 text-primary"></i>Registrar nueva cancha
                     </h6>
@@ -79,15 +79,15 @@
                             @enderror
                             <div id="preview" class="mt-2 d-none">
                                 <img id="previewImg" src="" alt="Preview"
-                                     class="img-thumbnail" style="max-height: 200px;">
+                                     class="img-thumbnail" style="max-height: 200px; border-radius: 10px;">
                             </div>
                         </div>
 
                         <div class="d-flex justify-content-between">
-                            <a href="{{ route('admin.courts.index') }}" class="btn btn-outline-secondary">
+                            <a href="{{ route('admin.courts.index') }}" class="btn btn-outline-secondary btn-pill px-3">
                                 <i class="bi bi-arrow-left me-1"></i> Volver
                             </a>
-                            <button type="submit" class="btn btn-primary">
+                            <button type="submit" class="btn btn-primary btn-pill px-4">
                                 <i class="bi bi-save me-1"></i> Guardar cancha
                             </button>
                         </div>

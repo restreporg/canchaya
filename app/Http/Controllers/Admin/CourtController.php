@@ -23,7 +23,7 @@ class CourtController extends Controller
 
     public function store(StoreCourtRequest $request)
     {
-        $data = $request->except('image');
+        $data = collect($request->validated())->except('image')->toArray();
 
         if ($request->hasFile('image')) {
             $data['image'] = $request->file('image')->store('courts', 'public');
@@ -46,7 +46,7 @@ class CourtController extends Controller
 
     public function update(UpdateCourtRequest $request, Court $court)
     {
-        $data = $request->except('image');
+        $data = collect($request->validated())->except('image')->toArray();
 
         if ($request->hasFile('image')) {
             if ($court->image) {
@@ -61,9 +61,6 @@ class CourtController extends Controller
 
     public function destroy(Court $court)
     {
-        if ($court->image) {
-            Storage::disk('public')->delete($court->image);
-        }
         $court->update(['is_active' => false]);
         return redirect()->route('admin.courts.index')->with('success', 'Cancha desactivada.');
     }

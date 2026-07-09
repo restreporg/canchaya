@@ -4,15 +4,15 @@
 @section('body')
 
     <div class="mb-4">
-        <a href="{{ route('admin.payments.index') }}" class="btn btn-sm btn-outline-secondary">
+        <a href="{{ route('admin.payments.index') }}" class="btn btn-sm btn-outline-secondary btn-pill px-3">
             <i class="bi bi-arrow-left me-1"></i> Volver
         </a>
     </div>
 
     <div class="row g-4">
         <div class="col-md-6">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white fw-semibold">Información del Pago</div>
+            <div class="card border-0 shadow-sm card-soft">
+                <div class="card-header bg-white fw-semibold border-0 pt-3">Información del Pago</div>
                 <div class="card-body">
                     <table class="table table-sm table-borderless mb-0">
                         <tr>
@@ -25,7 +25,7 @@
                         </tr>
                         <tr>
                             <td class="text-muted">Monto</td>
-                            <td class="fw-bold fs-5">${{ number_format($payment->amount, 2) }}</td>
+                            <td class="fw-bold fs-5 text-primary">${{ number_format($payment->amount, 2) }}</td>
                         </tr>
                         <tr>
                             <td class="text-muted">Método</td>
@@ -34,11 +34,7 @@
                         <tr>
                             <td class="text-muted">Estado</td>
                             <td>
-                                @php
-                                    $colors = ['pendiente'=>'warning','pagado'=>'success','fallido'=>'danger','reembolsado'=>'info'];
-                                    $color = $colors[$payment->status] ?? 'secondary';
-                                @endphp
-                                <span class="badge bg-{{ $color }}">{{ ucfirst($payment->status) }}</span>
+                                <span class="badge badge-pill-soft status-{{ $payment->status }}">{{ ucfirst($payment->status) }}</span>
                             </td>
                         </tr>
                         <tr>
@@ -51,8 +47,8 @@
         </div>
 
         <div class="col-md-6">
-            <div class="card border-0 shadow-sm mb-3">
-                <div class="card-header bg-white fw-semibold">Reserva Asociada</div>
+            <div class="card border-0 shadow-sm mb-3 card-soft">
+                <div class="card-header bg-white fw-semibold border-0 pt-3">Reserva Asociada</div>
                 <div class="card-body">
                     @if($payment->reservation)
                         <table class="table table-sm table-borderless mb-0">
@@ -70,10 +66,12 @@
                             </tr>
                             <tr>
                                 <td class="text-muted">Estado reserva</td>
-                                <td>{{ ucfirst($payment->reservation->status) }}</td>
+                                <td>
+                                    <span class="badge badge-pill-soft status-{{ $payment->reservation->status }}">{{ ucfirst($payment->reservation->status) }}</span>
+                                </td>
                             </tr>
                         </table>
-                        <a href="{{ route('admin.reservations.show', $payment->reservation) }}" class="btn btn-sm btn-outline-primary mt-2">
+                        <a href="{{ route('admin.reservations.show', $payment->reservation) }}" class="btn btn-sm btn-outline-primary btn-pill px-3 mt-2">
                             Ver reserva
                         </a>
                     @else
@@ -82,8 +80,8 @@
                 </div>
             </div>
 
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white fw-semibold">Cambiar Estado</div>
+            <div class="card border-0 shadow-sm card-soft">
+                <div class="card-header bg-white fw-semibold border-0 pt-3">Cambiar Estado</div>
                 <div class="card-body">
                     <form action="{{ route('admin.payments.update', $payment) }}" method="POST">
                         @csrf
@@ -96,7 +94,7 @@
                                     </option>
                                 @endforeach
                             </select>
-                            <button class="btn btn-primary" type="submit">Guardar</button>
+                            <button class="btn btn-primary btn-pill" type="submit">Guardar</button>
                         </div>
                     </form>
                 </div>
