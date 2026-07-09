@@ -11,6 +11,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        // 1. CONFIGURACIÓN CLAVE: Confía en los proxies para forzar HTTPS
+        $middleware->trustProxies(at: '*');
+
         $middleware->alias([
             'isAdmin' => \App\Http\Middleware\IsAdmin::class,
         ]);
