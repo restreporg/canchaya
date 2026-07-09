@@ -19,7 +19,9 @@ class ReservationController extends Controller
         $reservations = Reservation::where('user_id', Auth::id())
             ->with('court')
             ->orderBy('start_datetime', 'desc')
-            ->get();
+            ->paginate(10)
+            ->withQueryString();
+
         return view('client.reservations.index', compact('reservations'));
     }
 
@@ -47,8 +49,8 @@ class ReservationController extends Controller
         $conflict = Reservation::where('court_id', $request->court_id)
             ->where('status', '!=', 'cancelada')
             ->where(function ($q) use ($request) {
-                $q->whereBetween('start_datetime', [$request->start_datetime, $request->end_datetime])
-                  ->orWhereBetween('end_datetime', [$request->start_datetime, $request->end_datetime]);
+                $q->where('start_datetime', '<', $request->end_datetime)
+                  ->where('end_datetime', '>', $request->start_datetime);
             })->exists();
 
         if ($conflict) {

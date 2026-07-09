@@ -1,61 +1,59 @@
-@extends('layouts.admin')
-@section('title', 'Reservas')
+@extends('layouts.client')
+@section('title', 'Mis Reservas')
 
 @section('body')
 
-    <p class="text-muted mb-4">Todas las reservas del sistema</p>
-
-    <div class="card border-0 shadow-sm">
-        <div class="card-body p-0">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-dark">
-                    <tr>
-                        <th>#</th>
-                        <th>Cliente</th>
-                        <th>Cancha</th>
-                        <th>Inicio</th>
-                        <th>Fin</th>
-                        <th>Total</th>
-                        <th>Estado</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($reservations as $res)
-                        @php
-                            $colors = ['pendiente'=>'warning','confirmada'=>'success','cancelada'=>'secondary','completada'=>'info'];
-                            $color = $colors[$res->status] ?? 'secondary';
-                        @endphp
-                        <tr>
-                            <td>{{ $res->id }}</td>
-                            <td>{{ $res->user->name ?? '-' }}</td>
-                            <td>{{ $res->court->name ?? '-' }}</td>
-                            <td>{{ $res->start_datetime->format('d/m/Y H:i') }}</td>
-                            <td>{{ $res->end_datetime->format('d/m/Y H:i') }}</td>
-                            <td>${{ number_format($res->total_price, 2) }}</td>
-                            <td><span class="badge bg-{{ $color }}">{{ ucfirst($res->status) }}</span></td>
-                            <td>
-                                <a href="{{ route('admin.reservations.show', $res) }}" class="btn btn-sm btn-outline-info">
-                                    <i class="bi bi-eye"></i>
-                                </a>
-                                <form action="{{ route('admin.reservations.destroy', $res) }}" method="POST" class="d-inline"
-                                      onsubmit="return confirm('¿Eliminar esta reserva?')">
-                                    @csrf @method('DELETE')
-                                    <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
-                                </form>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="8" class="text-center text-muted py-4">
-                                <i class="bi bi-inbox fs-4 d-block mb-2"></i>
-                                No hay reservas aún.
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h5 class="fw-bold mb-0">Mis Reservas</h5>
+        <a href="{{ route('client.reservations.create') }}" class="btn btn-primary btn-sm">
+            <i class="bi bi-plus-circle me-1"></i> Nueva Reserva
+        </a>
     </div>
+
+    @if($reservations->isEmpty())
+        <div class="text-center py-5 text-muted">
+            <i class="bi bi-calendar-x fs-1 d-block mb-3"></i>
+            <p class="mb-3">Aún no tienes reservas.</p>
+            <a href="{{ route('client.reservations.create') }}" class="btn btn-primary">Reservar una cancha</a>
+        </div>
+    @else
+        <div class="row g-3">
+            @foreach($reservations as $res)
+                @php
+                    $colors = ['pendiente'=>'warning','confirmada'=>'success','cancelada'=>'secondary','completada'=>'info'];
+                    $color = $colors[$res->status] ?? 'secondary';
+                @endphp
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body d-flex justify-content-between align-items-center flex-wrap gap-2">
+                            <div>
+                                <h6 class="mb-1 fw-bold">{{ $res->court->name ?? 'Cancha' }}</h6>
+                                <small class="text-muted">
+                                    <i class="bi bi-calendar me-1"></i>
+                                    {{ $res->start_datetime->format('d/m/Y') }}
+                                    &nbsp;·&nbsp;
+                                    <i class="bi bi-clock me-1"></i>
+                                    {{ $res->start_datetime->format('H:i') }} – {{ $res->end_datetime->format('H:i') }}
+                                    &nbsp;·&nbsp;
+                                    <strong>${{ number_format($res->total_price, 2) }}</strong>
+                                </small>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="badge bg-{{ $color }}">{{ ucfirst($res->status) }}</span>
+                                <a href="{{ route('client.reservations.show', $res) }}" class="btn btn-sm btn-outline-primary">
+                                    Ver detalle
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+
+        {{-- Paginación --}}
+        <div class="mt-4 d-flex justify-content-center">
+            {{ $reservations->links() }}
+        </div>
+    @endif
 
 @endsection
