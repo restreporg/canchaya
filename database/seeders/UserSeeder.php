@@ -10,32 +10,43 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        User::create([
-            'name'     => 'Administrador',
-            'email'    => 'admin@canchaya.com',
-            'password' => Hash::make('password'),
-            'role'     => 'admin',
-        ]);
+        $users = [
+            [
+                'name' => 'Administrador',
+                'email' => 'admin@canchaya.com',
+                'password' => 'password',
+                'role' => 'admin',
+            ],
+            [
+                'name' => 'Carlos López',
+                'email' => 'carlos@gmail.com',
+                'password' => 'password',
+                'role' => 'client',
+            ],
+            [
+                'name' => 'María García',
+                'email' => 'maria@gmail.com',
+                'password' => 'password',
+                'role' => 'client',
+            ],
+            [
+                'name' => 'Juan Pérez',
+                'email' => 'juan@gmail.com',
+                'password' => 'password',
+                'role' => 'client',
+            ],
+        ];
 
-        User::create([
-            'name'     => 'Carlos López',
-            'email'    => 'carlos@gmail.com',
-            'password' => Hash::make('password'),
-            'role'     => 'client',
-        ]);
-
-        User::create([
-            'name'     => 'María García',
-            'email'    => 'maria@gmail.com',
-            'password' => Hash::make('password'),
-            'role'     => 'client',
-        ]);
-
-        User::create([
-            'name'     => 'Juan Pérez',
-            'email'    => 'juan@gmail.com',
-            'password' => Hash::make('password'),
-            'role'     => 'client',
-        ]);
+        foreach ($users as $data) {
+            User::updateOrCreate(
+                ['email' => $data['email']],
+                [
+                    'name' => $data['name'],
+                    'password' => Hash::make($data['password']),
+                    'role' => $data['role'],
+                    'email_verified_at' => now(), // opcional, evita bloqueos si luego usas 'verified'
+                ]
+            );
+        }
     }
 }

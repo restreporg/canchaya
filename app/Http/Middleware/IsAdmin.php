@@ -4,15 +4,16 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class IsAdmin
 {
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next): Response
     {
-        if (auth()->check() && auth()->user()->role === 'admin') {
-            return $next($request);
+        if (! $request->user() || $request->user()->role !== 'admin') {
+            abort(403, 'No tienes permiso para acceder a esta sección.');
         }
 
-        abort(403, 'No tienes permiso para acceder aquí.');
+        return $next($request);
     }
 }
