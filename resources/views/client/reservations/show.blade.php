@@ -1,25 +1,6 @@
 @extends('layouts.client')
 @section('title', 'Detalle de Reserva')
 
-@push('styles')
-<style>
-    /* Mismos badges pastel que en "Mis Reservas", para consistencia visual */
-    .badge-pill-soft {
-        border-radius: 999px;
-        font-weight: 600;
-        padding: .4em .9em;
-    }
-    .status-pendiente  { background: #fff6e0; color: #d99a00; }
-    .status-confirmada { background: #e6f9ee; color: #178a45; }
-    .status-cancelada  { background: #f1f2f3; color: #6c757d; }
-    .status-completada { background: #e8f0ff; color: #2563eb; }
-    .status-pagado      { background: #e6f9ee; color: #178a45; }
-
-    .card-soft { border-radius: 14px; }
-    .btn-pill  { border-radius: 999px; }
-</style>
-@endpush
-
 @section('body')
 
     <div class="mb-4">

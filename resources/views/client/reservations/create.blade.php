@@ -26,11 +26,6 @@
         justify-content: center;
         font-size: 2.75rem;
     }
-    .badge-pill-soft {
-        border-radius: 999px;
-        font-weight: 600;
-        padding: .4em .9em;
-    }
     .btn-reservar {
         border-radius: 10px;
     }
@@ -143,27 +138,55 @@
                         {{-- Formulario de reserva --}}
                         <div class="collapse" id="form-{{ $court->id }}">
                             <div class="card-body border-top">
-                                <form action="{{ route('client.reservations.store') }}" method="POST">
+                                <form action="{{ route('client.reservations.store') }}" method="POST"
+                                      class="reservation-form" data-price="{{ $court->price_per_hour }}">
                                     @csrf
                                     <input type="hidden" name="court_id" value="{{ $court->id }}">
+                                    <input type="hidden" name="start_datetime" class="js-start-datetime">
+                                    <input type="hidden" name="end_datetime" class="js-end-datetime">
 
                                     <div class="mb-3">
-                                        <label class="form-label fw-semibold small">Fecha y hora de inicio</label>
-                                        <input type="datetime-local" name="start_datetime"
-                                               min="{{ now()->format('Y-m-d\TH:i') }}"
-                                               value="{{ old('start_datetime') }}"
-                                               class="form-control form-control-sm @error('start_datetime') is-invalid @enderror">
-                                        @error('start_datetime')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                        <label class="form-label fw-semibold small">Fecha</label>
+                                        <input type="date" class="form-control form-control-sm js-res-date"
+                                               min="{{ now()->toDateString() }}"
+                                               value="{{ now()->toDateString() }}">
                                     </div>
 
                                     <div class="mb-3">
-                                        <label class="form-label fw-semibold small">Fecha y hora de fin</label>
-                                        <input type="datetime-local" name="end_datetime"
-                                               min="{{ now()->format('Y-m-d\TH:i') }}"
-                                               value="{{ old('end_datetime') }}"
-                                               class="form-control form-control-sm @error('end_datetime') is-invalid @enderror">
-                                        @error('end_datetime')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                        <label class="form-label fw-semibold small">Hora de inicio</label>
+                                        <select class="form-select form-select-sm js-start-time">
+                                            @for($h = 6; $h <= 23; $h++)
+                                                @foreach(['00', '30'] as $m)
+                                                    @php $t = sprintf('%02d:%s', $h, $m); @endphp
+                                                    <option value="{{ $t }}">{{ $t }}</option>
+                                                @endforeach
+                                            @endfor
+                                        </select>
                                     </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold small d-block">Duración</label>
+                                        <div class="btn-group btn-group-sm w-100 js-duration-group" role="group">
+                                            <button type="button" class="btn btn-outline-primary js-duration-btn active" data-hours="1">1h</button>
+                                            <button type="button" class="btn btn-outline-primary js-duration-btn" data-hours="1.5">1h30</button>
+                                            <button type="button" class="btn btn-outline-primary js-duration-btn" data-hours="2">2h</button>
+                                            <button type="button" class="btn btn-outline-primary js-duration-btn" data-hours="3">3h</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="rounded-3 p-2 mb-3 small js-summary" style="background:#f1f8f4;">
+                                        <div class="d-flex justify-content-between">
+                                            <span class="text-muted">Horario</span>
+                                            <span class="fw-semibold js-summary-time">06:00 – 07:00</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between">
+                                            <span class="text-muted">Total</span>
+                                            <span class="fw-bold text-primary js-summary-price">$0</span>
+                                        </div>
+                                    </div>
+
+                                    @error('start_datetime')<div class="text-danger small mb-2">{{ $message }}</div>@enderror
+                                    @error('end_datetime')<div class="text-danger small mb-2">{{ $message }}</div>@enderror
 
                                     <button type="submit" class="btn btn-success w-100 btn-sm rounded-3">
                                         <i class="bi bi-check-circle me-1"></i> Confirmar reserva
@@ -178,3 +201,91 @@
     @endif
 
 @endsection
+
+@push('scripts')
+<script>
+document.querySelectorAll('.reservation-form').forEach(function (form) {
+    const pricePerHour = parseFloat(form.dataset.price);
+    const dateInput     = form.querySelector('.js-res-date');
+    const startSelect   = form.querySelector('.js-start-time');
+    const durationBtns  = form.querySelectorAll('.js-duration-btn');
+    const startHidden   = form.querySelector('.js-start-datetime');
+    const endHidden      = form.querySelector('.js-end-datetime');
+    const summaryTime   = form.querySelector('.js-summary-time');
+    const summaryPrice  = form.querySelector('.js-summary-price');
+
+    let hours = parseFloat(form.querySelector('.js-duration-btn.active').dataset.hours);
+
+    function addMinutes(timeStr, minutesToAdd) {
+        const [h, m] = timeStr.split(':').map(Number);
+        const total = h * 60 + m + minutesToAdd;
+        const newH = Math.floor(((total % 1440) + 1440) % 1440 / 60);
+        const newM = ((total % 60) + 60) % 60;
+        return String(newH).padStart(2, '0') + ':' + String(newM).padStart(2, '0');
+    }
+
+    function update() {
+        const date = dateInput.value;
+        const start = startSelect.value;
+        const end = addMinutes(start, hours * 60);
+
+        startHidden.value = date + 'T' + start;
+        endHidden.value   = date + 'T' + end;
+
+        summaryTime.textContent = start + ' – ' + end;
+
+        const total = pricePerHour * hours;
+        summaryPrice.textContent = '$' + total.toLocaleString('es-CO');
+    }
+
+    function setDefaultStartTime() {
+        const today = new Date().toISOString().split('T')[0];
+        if (dateInput.value !== today) {
+            return;
+        }
+
+        const now = new Date();
+        const nowMinutes = now.getHours() * 60 + now.getMinutes() + 30; // margen de 30 min
+
+        let chosen = null;
+        for (const option of startSelect.options) {
+            const [h, m] = option.value.split(':').map(Number);
+            if (h * 60 + m >= nowMinutes) {
+                chosen = option.value;
+                break;
+            }
+        }
+
+        if (chosen) {
+            startSelect.value = chosen;
+        } else {
+            // Ya no quedan horarios hoy: saltamos al día siguiente
+            const tomorrow = new Date(now);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            dateInput.value = tomorrow.toISOString().split('T')[0];
+            startSelect.selectedIndex = 0;
+        }
+    }
+
+    durationBtns.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            durationBtns.forEach(b => b.classList.remove('active', 'btn-primary'));
+            durationBtns.forEach(b => b.classList.add('btn-outline-primary'));
+            btn.classList.add('active', 'btn-primary');
+            btn.classList.remove('btn-outline-primary');
+            hours = parseFloat(btn.dataset.hours);
+            update();
+        });
+    });
+
+    dateInput.addEventListener('change', function () {
+        setDefaultStartTime();
+        update();
+    });
+    startSelect.addEventListener('change', update);
+
+    setDefaultStartTime();
+    update();
+});
+</script>
+@endpush

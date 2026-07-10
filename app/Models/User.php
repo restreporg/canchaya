@@ -13,7 +13,11 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    protected $fillable = ['name', 'email', 'phone', 'role', 'password'];
+    // 'role' NO debe estar aquí: si se asigna masivamente por accidente
+    // (ej. $request->all() en algún formulario futuro), cualquier usuario
+    // podría auto-otorgarse el rol 'admin'. Se asigna explícitamente en
+    // el controlador de registro, nunca vía mass assignment.
+    protected $fillable = ['name', 'email', 'phone', 'password'];
 
     protected $hidden = ['password', 'remember_token'];
 

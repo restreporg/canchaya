@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateCourtRequest extends FormRequest
 {
@@ -15,7 +16,7 @@ class UpdateCourtRequest extends FormRequest
     {
         return [
             'name'           => 'required|string|max:255',
-            'type'           => 'required|string',
+            'type'           => ['required', 'string', Rule::in(['Fútbol', 'Tenis', 'Basketball', 'Volleyball', 'Pádel'])],
             'price_per_hour' => 'required|numeric|min:0',
             'location'       => 'nullable|string|max:255',
             'description'    => 'nullable|string',
@@ -29,6 +30,7 @@ class UpdateCourtRequest extends FormRequest
         return [
             'name.required'           => 'El nombre es obligatorio.',
             'type.required'           => 'El tipo de cancha es obligatorio.',
+            'type.in'                 => 'Selecciona un tipo de cancha válido.',
             'price_per_hour.required' => 'El precio por hora es obligatorio.',
             'price_per_hour.numeric'  => 'El precio debe ser un número.',
             'price_per_hour.min'      => 'El precio no puede ser negativo.',

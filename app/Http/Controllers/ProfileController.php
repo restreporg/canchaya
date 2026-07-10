@@ -1,60 +1,48 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Client;
 
-use App\Http\Requests\ProfileUpdateRequest;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Client\StoreReviewRequest;
+use App\Models\Review;
+use App\Models\Reservation;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\View\View;
 
-class ProfileController extends Controller
+class ReviewController extends Controller
 {
-    /**
-     * Display the user's profile form.
-     */
-    public function edit(Request $request): View
-    {
-        return view('profile.edit', [
-            'user' => $request->user(),
-        ]);
-    }
+    use AuthorizesRequests;
 
-    /**
-     * Update the user's profile information.
-     */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+    public function store(StoreReviewRequest $request, Reservation $reservation)
     {
-        $request->user()->fill($request->validated());
+        // Reutilizamos la habilidad 'view' de ReservationPolicy: solo el dueño
+        // de la reserva puede reseñarla.
+        $this->authorize('view', $reservation);
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        if ($reservation->status !== 'completada') {
+            return back()->withErrors(['review' => 'Solo puedes reseñar reservas completadas.']);
         }
 
-        $request->user()->save();
+        if ($reservation->review) {
+            return back()->withErrors(['review' => 'Ya dejaste una reseña para esta reserva.']);
+        }
 
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
-    }
-
-    /**
-     * Delete the user's account.
-     */
-    public function destroy(Request $request): RedirectResponse
-    {
-        $request->validateWithBag('userDeletion', [
-            'password' => ['required', 'current_password'],
+        Review::create([
+            'reservation_id' => $reservation->id,
+            'user_id' => Auth::id(),
+            'rating' => $request->rating,
+            'comment' => $request->comment,
         ]);
 
-        $user = $request->user();
+        return redirect()->route('client.reservations.show', $reservation)
+            ->with('success', 'Reseña enviada.');
+    }
 
-        Auth::logout();
+    public function destroy(Review $review)
+    {
+        $this->authorize('delete', $review);
 
-        $user->delete();
-
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return Redirect::to('/');
+        $review->delete();
+        return back()->with('success', 'Reseña eliminada.');
     }
 }

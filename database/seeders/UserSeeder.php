@@ -38,15 +38,14 @@ class UserSeeder extends Seeder
         ];
 
         foreach ($users as $data) {
-            User::updateOrCreate(
-                ['email' => $data['email']],
-                [
-                    'name' => $data['name'],
-                    'password' => Hash::make($data['password']),
-                    'role' => $data['role'],
-                    'email_verified_at' => now(), // opcional, evita bloqueos si luego usas 'verified'
-                ]
-            );
+            $user = User::firstOrNew(['email' => $data['email']]);
+
+            $user->forceFill([
+                'name'              => $data['name'],
+                'password'          => Hash::make($data['password']),
+                'role'              => $data['role'],
+                'email_verified_at' => now(),
+            ])->save();
         }
     }
 }

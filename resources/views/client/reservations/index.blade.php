@@ -13,17 +13,6 @@
         box-shadow: 0 .75rem 1.5rem rgba(0,0,0,.06) !important;
     }
 
-    /* Badges de estado en tono pastel, en vez del bg-warning/success/etc. plano de Bootstrap */
-    .badge-pill-soft {
-        border-radius: 999px;
-        font-weight: 600;
-        padding: .4em .9em;
-    }
-    .status-pendiente  { background: #fff6e0; color: #d99a00; }
-    .status-confirmada { background: #e6f9ee; color: #178a45; }
-    .status-cancelada  { background: #f1f2f3; color: #6c757d; }
-    .status-completada { background: #e8f0ff; color: #2563eb; }
-
     .btn-ver-detalle { border-radius: 999px; }
 </style>
 @endpush

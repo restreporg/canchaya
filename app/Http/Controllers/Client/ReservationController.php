@@ -9,6 +9,7 @@ use App\Models\Reservation;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ReservationController extends Controller
 {
@@ -46,29 +47,42 @@ class ReservationController extends Controller
 
     public function store(StoreReservationRequest $request)
     {
-        $conflict = Reservation::where('court_id', $request->court_id)
-            ->where('status', '!=', 'cancelada')
-            ->where(function ($q) use ($request) {
-                $q->where('start_datetime', '<', $request->end_datetime)
-                  ->where('end_datetime', '>', $request->start_datetime);
-            })->exists();
+        $reservation = DB::transaction(function () use ($request) {
+            // Bloqueamos la fila de la cancha (que siempre existe) para que dos
+            // requests concurrentes por la misma cancha se resuelvan una por una,
+            // sin depender de "gap locks" que varían según el motor de base de datos.
+            $court = Court::where('id', $request->court_id)->lockForUpdate()->firstOrFail();
 
-        if ($conflict) {
-            return back()->withErrors(['start_datetime' => 'La cancha no está disponible en ese horario.']);
+            $conflict = Reservation::where('court_id', $request->court_id)
+                ->where('status', '!=', 'cancelada')
+                ->where(function ($q) use ($request) {
+                    $q->where('start_datetime', '<', $request->end_datetime)
+                      ->where('end_datetime', '>', $request->start_datetime);
+                })
+                ->exists();
+
+            if ($conflict) {
+                return null;
+            }
+
+            $hours = (strtotime($request->end_datetime) - strtotime($request->start_datetime)) / 3600;
+            $total = $court->price_per_hour * $hours;
+
+            return Reservation::create([
+                'user_id'        => Auth::id(),
+                'court_id'       => $request->court_id,
+                'start_datetime' => $request->start_datetime,
+                'end_datetime'   => $request->end_datetime,
+                'total_price'    => $total,
+                'status'         => 'pendiente',
+            ]);
+        });
+
+        if (!$reservation) {
+            return back()->withErrors([
+                'start_datetime' => 'Ese horario ya fue reservado por otro cliente. Prueba con otro horario o cancha.',
+            ]);
         }
-
-        $court = Court::findOrFail($request->court_id);
-        $hours = (strtotime($request->end_datetime) - strtotime($request->start_datetime)) / 3600;
-        $total = $court->price_per_hour * $hours;
-
-        Reservation::create([
-            'user_id'        => Auth::id(),
-            'court_id'       => $request->court_id,
-            'start_datetime' => $request->start_datetime,
-            'end_datetime'   => $request->end_datetime,
-            'total_price'    => $total,
-            'status'         => 'pendiente',
-        ]);
 
         return redirect()->route('client.reservations.index')->with('success', 'Reserva creada.');
     }
