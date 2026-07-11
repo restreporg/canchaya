@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Court;
 use App\Models\Reservation;
+use App\Models\Schedule;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -14,7 +15,7 @@ class ClientReservationTest extends TestCase
 
     private function clientUser(): User
     {
-        return User::create([
+        return User::forceCreate([
             'name'     => 'Cliente',
             'email'    => 'cliente@test.com',
             'password' => bcrypt('password'),
@@ -44,12 +45,22 @@ class ClientReservationTest extends TestCase
         $client = $this->clientUser();
         $court  = $this->court();
 
+        $tomorrow = now()->addDay();
+
+        Schedule::create([
+            'court_id'     => $court->id,
+            'day_of_week'  => $tomorrow->dayOfWeek,
+            'open_time'    => '08:00',
+            'close_time'   => '22:00',
+            'is_available' => true,
+        ]);
+
         $this->actingAs($client);
 
         $response = $this->post(route('client.reservations.store'), [
             'court_id'       => $court->id,
-            'start_datetime' => now()->addDay()->setHour(10)->format('Y-m-d H:i'),
-            'end_datetime'   => now()->addDay()->setHour(12)->format('Y-m-d H:i'),
+            'start_datetime' => $tomorrow->clone()->setTime(10, 0)->format('Y-m-d H:i'),
+            'end_datetime'   => $tomorrow->clone()->setTime(12, 0)->format('Y-m-d H:i'),
         ]);
 
         $response->assertRedirect(route('client.reservations.index'));
@@ -62,7 +73,7 @@ class ClientReservationTest extends TestCase
     public function test_client_cannot_see_other_client_reservation(): void
     {
         $client1 = $this->clientUser();
-        $client2 = User::create([
+        $client2 = User::forceCreate([
             'name'     => 'Cliente 2',
             'email'    => 'cliente2@test.com',
             'password' => bcrypt('password'),

@@ -12,7 +12,7 @@ class AuthTest extends TestCase
 
     public function test_admin_can_login_and_redirect_to_dashboard(): void
     {
-        $admin = User::create([
+        $admin = User::forceCreate([
             'name'     => 'Admin',
             'email'    => 'admin@test.com',
             'password' => bcrypt('password'),
@@ -29,7 +29,7 @@ class AuthTest extends TestCase
 
     public function test_client_can_login_and_redirect_to_reservations(): void
     {
-        $client = User::create([
+        $client = User::forceCreate([
             'name'     => 'Cliente',
             'email'    => 'cliente@test.com',
             'password' => bcrypt('password'),
@@ -58,7 +58,7 @@ class AuthTest extends TestCase
 
     public function test_user_can_logout(): void
     {
-        $user = User::create([
+        $user = User::forceCreate([
             'name'     => 'Usuario',
             'email'    => 'user@test.com',
             'password' => bcrypt('password'),

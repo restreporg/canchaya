@@ -13,21 +13,21 @@ class AdminCourtTest extends TestCase
 
     private function adminUser(): User
     {
-        return User::create([
-            'name'     => 'Admin',
-            'email'    => 'admin@test.com',
+        return User::forceCreate([
+            'name' => 'Admin',
+            'email' => 'admin@test.com',
             'password' => bcrypt('password'),
-            'role'     => 'admin',
+            'role' => 'admin',
         ]);
     }
 
     private function clientUser(): User
     {
-        return User::create([
-            'name'     => 'Cliente',
-            'email'    => 'cliente@test.com',
+        return User::forceCreate([
+            'name' => 'Cliente',
+            'email' => 'cliente@test.com',
             'password' => bcrypt('password'),
-            'role'     => 'client',
+            'role' => 'client',
         ]);
     }
 
@@ -50,11 +50,11 @@ class AdminCourtTest extends TestCase
         $this->actingAs($this->adminUser());
 
         $response = $this->post(route('admin.courts.store'), [
-            'name'           => 'Cancha Test',
-            'type'           => 'Fútbol',
+            'name' => 'Cancha Test',
+            'type' => 'Fútbol',
             'price_per_hour' => 50000,
-            'location'       => 'Bloque A',
-            'description'    => 'Descripción test',
+            'location' => 'Bloque A',
+            'description' => 'Descripción test',
         ]);
 
         $response->assertRedirect(route('admin.courts.index'));
@@ -66,17 +66,17 @@ class AdminCourtTest extends TestCase
         $this->actingAs($this->adminUser());
 
         $court = Court::create([
-            'name'           => 'Cancha Original',
-            'type'           => 'Tenis',
+            'name' => 'Cancha Original',
+            'type' => 'Tenis',
             'price_per_hour' => 30000,
-            'is_active'      => true,
+            'is_active' => true,
         ]);
 
         $response = $this->put(route('admin.courts.update', $court), [
-            'name'           => 'Cancha Actualizada',
-            'type'           => 'Tenis',
+            'name' => 'Cancha Actualizada',
+            'type' => 'Tenis',
             'price_per_hour' => 35000,
-            'is_active'      => true,
+            'is_active' => true,
         ]);
 
         $response->assertRedirect(route('admin.courts.index'));
@@ -88,10 +88,10 @@ class AdminCourtTest extends TestCase
         $this->actingAs($this->adminUser());
 
         $court = Court::create([
-            'name'           => 'Cancha Activa',
-            'type'           => 'Fútbol',
+            'name' => 'Cancha Activa',
+            'type' => 'Fútbol',
             'price_per_hour' => 50000,
-            'is_active'      => true,
+            'is_active' => true,
         ]);
 
         $response = $this->delete(route('admin.courts.destroy', $court));

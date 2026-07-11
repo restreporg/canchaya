@@ -18,15 +18,15 @@ class AuthenticationTest extends TestCase
 
     public function test_users_can_authenticate_using_the_login_screen(): void
     {
-        $user = User::create([
-            'name'     => 'Test User',
-            'email'    => 'test@example.com',
+        $user = User::forceCreate([
+            'name' => 'Test User',
+            'email' => 'test@example.com',
             'password' => bcrypt('password'),
-            'role'     => 'client',
+            'role' => 'client',
         ]);
 
         $response = $this->post('/login', [
-            'email'    => 'test@example.com',
+            'email' => 'test@example.com',
             'password' => 'password',
         ]);
 
@@ -36,15 +36,15 @@ class AuthenticationTest extends TestCase
 
     public function test_users_can_not_authenticate_with_invalid_password(): void
     {
-        $user = User::create([
-            'name'     => 'Test User',
-            'email'    => 'test@example.com',
+        $user = User::forceCreate([
+            'name' => 'Test User',
+            'email' => 'test@example.com',
             'password' => bcrypt('password'),
-            'role'     => 'client',
+            'role' => 'client',
         ]);
 
         $this->post('/login', [
-            'email'    => 'test@example.com',
+            'email' => 'test@example.com',
             'password' => 'wrong-password',
         ]);
 
@@ -53,11 +53,11 @@ class AuthenticationTest extends TestCase
 
     public function test_users_can_logout(): void
     {
-        $user = User::create([
-            'name'     => 'Test User',
-            'email'    => 'test@example.com',
+        $user = User::forceCreate([
+            'name' => 'Test User',
+            'email' => 'test@example.com',
             'password' => bcrypt('password'),
-            'role'     => 'client',
+            'role' => 'client',
         ]);
 
         $this->actingAs($user);
