@@ -129,3 +129,32 @@ php artisan serve
 - "/admin/" — requiere estar autenticado y tener "role = admin".
 - "/client/" — requiere estar autenticado.
 - Un cliente no puede acceder a reservas de otros clientes (Policy)
+
+
+# IMAGENES DEL PROYECTO
+
+# Pagina de inicio
+
+<img width="1919" height="971" alt="Captura de pantalla 2026-07-11 202655" src="https://github.com/user-attachments/assets/91c6e812-8a98-4061-b358-83c3f950481e" />
+
+
+# Loggins (register, iniciar sesion)
+
+<img width="1919" height="1020" alt="Captura de pantalla 2026-07-11 202715" src="https://github.com/user-attachments/assets/b406a045-6783-4bc4-b6d1-93650e598b50" />
+<img width="1899" height="1017" alt="Captura de pantalla 2026-07-11 202727" src="https://github.com/user-attachments/assets/442d3367-9892-4660-801f-07b839cee243" />
+
+
+# Apartado de Admin
+
+<img width="1919" height="910" alt="Captura de pantalla 2026-07-11 204107" src="https://github.com/user-attachments/assets/056bc6f8-aac7-4126-bcbb-d14cc1602549" />
+<img width="1919" height="915" alt="Captura de pantalla 2026-07-11 204058" src="https://github.com/user-attachments/assets/c7429895-b546-41b0-9f69-c23e8ca3b450" />
+<img width="1919" height="1023" alt="Captura de pantalla 2026-07-11 204043" src="https://github.com/user-attachments/assets/d99ad35c-4b8a-4d5e-bb97-697729de8915" />
+<img width="1917" height="900" alt="Captura de pantalla 2026-07-11 204116" src="https://github.com/user-attachments/assets/8a7f9104-ae28-4156-b494-deb089bb67e2" />
+
+
+# Apartado de cliente 
+
+<img width="1919" height="970" alt="Captura de pantalla 2026-07-11 204218" src="https://github.com/user-attachments/assets/a463faa5-1863-445d-a3bb-c9a0f5e820fa" />
+<img width="1917" height="961" alt="Captura de pantalla 2026-07-11 204158" src="https://github.com/user-attachments/assets/8e896fbb-090b-43ec-ad33-a8bd3324b7ad" />
+<img width="1919" height="909" alt="Captura de pantalla 2026-07-11 204148" src="https://github.com/user-attachments/assets/8743ef3a-741a-491d-9f29-613a931e6b27" />
+<img width="1919" height="1014" alt="Captura de pantalla 2026-07-11 204234" src="https://github.com/user-attachments/assets/bdee4f1c-27b3-434f-b21c-c57e2cf56808" />
