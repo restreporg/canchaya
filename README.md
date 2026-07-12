@@ -1,8 +1,8 @@
 # Proyecto: CanchaYa
  Estudiantes:
- Santiago Restrepo Santamaria
- Juan Diego Perez 
- David Esnaider Quiñonez
+ -Santiago Restrepo Santamaria.
+ -Juan Diego Perez.
+ -David Esnaider Quiñonez.
 
 # Descripción
 Canchaya es una plataforma web de reservas de canchas deportivas desarrollada en Laravel.
