@@ -25,7 +25,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
 
     // ---------- Cliente ----------
-    Route::prefix('client')->name('client.')->group(function () {
+    Route::prefix('client')->name('api.client.')->group(function () {
         Route::apiResource('reservations', ClientReservationController::class)
             ->only(['index', 'store', 'show', 'destroy']);
 
@@ -37,7 +37,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     // ---------- Admin ----------
-    Route::middleware('isAdmin')->prefix('admin')->name('admin.')->group(function () {
+    Route::middleware('isAdmin')->prefix('admin')->name('api.admin.')->group(function () {
         Route::apiResource('courts', AdminCourtController::class);
         Route::delete('courts/{court}/image', [AdminCourtController::class, 'destroyImage']);
 
