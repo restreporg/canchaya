@@ -7,11 +7,12 @@ use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasApiTokens;
 
     // 'role' NO debe estar aquí: si se asigna masivamente por accidente
     // (ej. $request->all() en algún formulario futuro), cualquier usuario
