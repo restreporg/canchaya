@@ -158,3 +158,4 @@ php artisan serve
 <img width="1917" height="961" alt="Captura de pantalla 2026-07-11 204158" src="https://github.com/user-attachments/assets/8e896fbb-090b-43ec-ad33-a8bd3324b7ad" />
 <img width="1919" height="909" alt="Captura de pantalla 2026-07-11 204148" src="https://github.com/user-attachments/assets/8743ef3a-741a-491d-9f29-613a931e6b27" />
 <img width="1919" height="1014" alt="Captura de pantalla 2026-07-11 204234" src="https://github.com/user-attachments/assets/bdee4f1c-27b3-434f-b21c-c57e2cf56808" />
+"# canchayainsomnia" 
