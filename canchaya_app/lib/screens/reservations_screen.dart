@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import '../config/api_config.dart';
+import '../main.dart';
 import '../models/reservation.dart';
 import '../services/api_exception.dart';
 import '../services/reservation_service.dart';
@@ -11,20 +13,42 @@ class ReservationsScreen extends StatefulWidget {
   State<ReservationsScreen> createState() => _ReservationsScreenState();
 }
 
-class _ReservationsScreenState extends State<ReservationsScreen> {
+class _ReservationsScreenState extends State<ReservationsScreen>
+    with RouteAware {
   final _reservationService = ReservationService();
   late Future<List<Reservation>> _futureReservations;
 
   @override
   void initState() {
     super.initState();
+    _futureReservations = _reservationService.getMyReservations();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    routeObserver.subscribe(this, ModalRoute.of(context)!);
+  }
+
+  @override
+  void dispose() {
+    routeObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  /// Se llama cuando el usuario vuelve a esta pantalla después de haber
+  /// navegado a otra ruta encima (ej. crear una reserva y volver).
+  @override
+  void didPopNext() {
     _load();
   }
 
-  void _load() {
+  Future<void> _load() async {
+    final future = _reservationService.getMyReservations();
     setState(() {
-      _futureReservations = _reservationService.getMyReservations();
+      _futureReservations = future;
     });
+    await future.catchError((_) => <Reservation>[]);
   }
 
   Future<void> _cancel(Reservation reservation) async {
@@ -34,8 +58,14 @@ class _ReservationsScreenState extends State<ReservationsScreen> {
         title: const Text('Cancelar reserva'),
         content: const Text('¿Seguro que quieres cancelar esta reserva?'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('No')),
-          TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('Sí, cancelar')),
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('No'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Sí, cancelar'),
+          ),
         ],
       ),
     );
@@ -46,7 +76,9 @@ class _ReservationsScreenState extends State<ReservationsScreen> {
       _load();
     } on ApiException catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.firstFieldError)));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(e.firstFieldError)));
       }
     }
   }
@@ -67,7 +99,7 @@ class _ReservationsScreenState extends State<ReservationsScreen> {
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
-      onRefresh: () async => _load(),
+      onRefresh: _load,
       child: FutureBuilder<List<Reservation>>(
         future: _futureReservations,
         builder: (context, snapshot) {
@@ -75,7 +107,24 @@ class _ReservationsScreenState extends State<ReservationsScreen> {
             return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError) {
-            return const Center(child: Text('No se pudieron cargar tus reservas.'));
+            final message = snapshot.error is ApiException
+                ? (snapshot.error as ApiException).message
+                : 'No se pudieron cargar tus reservas.';
+            return ListView(
+              children: [
+                const SizedBox(height: 80),
+                Icon(Icons.error_outline, size: 48, color: Colors.grey[400]),
+                const SizedBox(height: 12),
+                Center(child: Text(message, textAlign: TextAlign.center)),
+                const SizedBox(height: 12),
+                Center(
+                  child: OutlinedButton(
+                    onPressed: _load,
+                    child: const Text('Reintentar'),
+                  ),
+                ),
+              ],
+            );
           }
 
           final reservations = snapshot.data ?? [];
@@ -83,7 +132,7 @@ class _ReservationsScreenState extends State<ReservationsScreen> {
             return const Center(child: Text('Todavía no tienes reservas.'));
           }
 
-          final formatter = DateFormat('d MMM yyyy, HH:mm', 'es');
+          final formatter = DateFormat('d MMM yyyy, HH:mm', ApiConfig.locale);
 
           return ListView.builder(
             padding: const EdgeInsets.all(12),
@@ -105,7 +154,13 @@ class _ReservationsScreenState extends State<ReservationsScreen> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Chip(
-                        label: Text(r.status, style: const TextStyle(color: Colors.white, fontSize: 12)),
+                        label: Text(
+                          r.status,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                          ),
+                        ),
                         backgroundColor: _statusColor(r.status),
                         padding: EdgeInsets.zero,
                         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,

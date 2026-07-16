@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import '../config/api_config.dart';
 import '../models/court.dart';
 import '../services/api_exception.dart';
 import '../services/court_service.dart';
@@ -41,7 +42,10 @@ class _CourtDetailScreenState extends State<CourtDetailScreen> {
   }
 
   Future<void> _pickTime(bool isStart) async {
-    final time = await showTimePicker(context: context, initialTime: TimeOfDay.now());
+    final time = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
     if (time != null) {
       setState(() {
         if (isStart) {
@@ -53,22 +57,45 @@ class _CourtDetailScreenState extends State<CourtDetailScreen> {
     }
   }
 
+  /// Arma el DateTime combinando la fecha elegida con la hora dada.
+  DateTime _combine(DateTime date, TimeOfDay time) {
+    return DateTime(date.year, date.month, date.day, time.hour, time.minute);
+  }
+
   Future<void> _confirmReservation(int courtId) async {
     if (_selectedDate == null || _startTime == null || _endTime == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Selecciona fecha, hora de inicio y hora de fin.')),
+        const SnackBar(
+          content: Text('Selecciona fecha, hora de inicio y hora de fin.'),
+        ),
       );
       return;
     }
 
-    final start = DateTime(
-      _selectedDate!.year, _selectedDate!.month, _selectedDate!.day,
-      _startTime!.hour, _startTime!.minute,
-    );
-    final end = DateTime(
-      _selectedDate!.year, _selectedDate!.month, _selectedDate!.day,
-      _endTime!.hour, _endTime!.minute,
-    );
+    final start = _combine(_selectedDate!, _startTime!);
+    final end = _combine(_selectedDate!, _endTime!);
+
+    // La hora de fin debe ser después de la hora de inicio.
+    if (!end.isAfter(start)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'La hora de fin debe ser posterior a la hora de inicio.',
+          ),
+        ),
+      );
+      return;
+    }
+
+    // No se puede reservar un horario que ya pasó.
+    if (start.isBefore(DateTime.now())) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No puedes reservar un horario que ya pasó.'),
+        ),
+      );
+      return;
+    }
 
     final formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
 
@@ -81,13 +108,17 @@ class _CourtDetailScreenState extends State<CourtDetailScreen> {
       );
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('¡Reserva creada! Puedes verla en "Mis reservas".')),
+          const SnackBar(
+            content: Text('¡Reserva creada! Puedes verla en "Mis reservas".'),
+          ),
         );
         Navigator.of(context).pop();
       }
     } on ApiException catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.firstFieldError)));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(e.firstFieldError)));
       }
     } finally {
       if (mounted) setState(() => _submitting = false);
@@ -117,28 +148,49 @@ class _CourtDetailScreenState extends State<CourtDetailScreen> {
                 if (court.imageUrl != null)
                   ClipRRect(
                     borderRadius: BorderRadius.circular(12),
-                    child: Image.network(court.imageUrl!, height: 180, width: double.infinity, fit: BoxFit.cover),
+                    child: Image.network(
+                      court.imageUrl!,
+                      height: 180,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 const SizedBox(height: 16),
-                Text(court.name, style: Theme.of(context).textTheme.headlineSmall),
+                Text(
+                  court.name,
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
                 const SizedBox(height: 4),
                 Text('${court.type} · ${court.location ?? 'Sin ubicación'}'),
                 const SizedBox(height: 8),
-                Text('\$${court.pricePerHour.toStringAsFixed(0)} / hora',
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                Text(
+                  '\$${court.pricePerHour.toStringAsFixed(0)} / hora',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
                 if (court.description != null) ...[
                   const SizedBox(height: 12),
                   Text(court.description!),
                 ],
                 const Divider(height: 32),
-                Text('Reservar', style: Theme.of(context).textTheme.titleMedium),
+                Text(
+                  'Reservar',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
                 const SizedBox(height: 12),
                 OutlinedButton.icon(
                   onPressed: _pickDate,
                   icon: const Icon(Icons.calendar_today),
-                  label: Text(_selectedDate == null
-                      ? 'Elegir fecha'
-                      : DateFormat('EEEE d MMM yyyy', 'es').format(_selectedDate!)),
+                  label: Text(
+                    _selectedDate == null
+                        ? 'Elegir fecha'
+                        : DateFormat(
+                            'EEEE d MMM yyyy',
+                            ApiConfig.locale,
+                          ).format(_selectedDate!),
+                  ),
                 ),
                 const SizedBox(height: 8),
                 Row(
@@ -147,7 +199,9 @@ class _CourtDetailScreenState extends State<CourtDetailScreen> {
                       child: OutlinedButton.icon(
                         onPressed: () => _pickTime(true),
                         icon: const Icon(Icons.access_time),
-                        label: Text(_startTime?.format(context) ?? 'Hora inicio'),
+                        label: Text(
+                          _startTime?.format(context) ?? 'Hora inicio',
+                        ),
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -162,11 +216,17 @@ class _CourtDetailScreenState extends State<CourtDetailScreen> {
                 ),
                 const SizedBox(height: 20),
                 FilledButton(
-                  onPressed: _submitting ? null : () => _confirmReservation(court.id),
+                  onPressed: _submitting
+                      ? null
+                      : () => _confirmReservation(court.id),
                   child: _submitting
                       ? const SizedBox(
-                          height: 20, width: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
                         )
                       : const Text('Confirmar reserva'),
                 ),

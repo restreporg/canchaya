@@ -20,24 +20,24 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'name'     => ['required', 'string', 'max:255'],
-            'email'    => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'phone'    => ['nullable', 'string', 'max:30'],
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
+            'phone' => ['nullable', 'string', 'max:30'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
         $user = User::forceCreate([
-            'name'     => $request->name,
-            'email'    => $request->email,
-            'phone'    => $request->phone,
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone' => $request->phone,
             'password' => Hash::make($request->password),
-            'role'     => 'client',
+            'role' => 'client',
         ]);
 
         $token = $user->createToken('flutter-app')->plainTextToken;
 
         return response()->json([
-            'user'  => new UserResource($user),
+            'user' => new UserResource($user),
             'token' => $token,
         ], 201);
     }
@@ -49,11 +49,11 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'email'    => ['required', 'string', 'email'],
+            'email' => ['required', 'string', 'email'],
             'password' => ['required', 'string'],
         ]);
 
-        if (! Auth::attempt($request->only('email', 'password'))) {
+        if (!Auth::attempt($request->only('email', 'password'))) {
             throw ValidationException::withMessages([
                 'email' => ['Las credenciales no coinciden con nuestros registros.'],
             ]);
@@ -64,7 +64,7 @@ class AuthController extends Controller
         $token = $user->createToken('flutter-app')->plainTextToken;
 
         return response()->json([
-            'user'  => new UserResource($user),
+            'user' => new UserResource($user),
             'token' => $token,
         ]);
     }
@@ -81,9 +81,14 @@ class AuthController extends Controller
 
     /**
      * Usuario autenticado actual (para restaurar sesión al abrir la app).
+     * Envuelto igual que login/register ("user" => ...) para que Flutter
+     * pueda usar el mismo parseo (AppUser.fromJson(res.data['user'])) en
+     * los tres endpoints, sin inconsistencias.
      */
     public function me(Request $request)
     {
-        return new UserResource($request->user());
+        return response()->json([
+            'user' => new UserResource($request->user()),
+        ]);
     }
 }

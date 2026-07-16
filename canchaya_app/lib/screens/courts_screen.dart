@@ -21,16 +21,21 @@ class _CourtsScreenState extends State<CourtsScreen> {
     _futureCourts = _courtService.getCourts();
   }
 
-  void _reload() {
+  Future<void> _reload() async {
+    final future = _courtService.getCourts();
     setState(() {
-      _futureCourts = _courtService.getCourts();
+      _futureCourts = future;
     });
+    // Esperamos el resultado (ignorando el error aquí; el FutureBuilder
+    // ya se encarga de mostrarlo) para que el RefreshIndicator sepa
+    // cuándo terminó la recarga.
+    await future.catchError((_) => <Court>[]);
   }
 
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
-      onRefresh: () async => _reload(),
+      onRefresh: _reload,
       child: FutureBuilder<List<Court>>(
         future: _futureCourts,
         builder: (context, snapshot) {
@@ -50,7 +55,10 @@ class _CourtsScreenState extends State<CourtsScreen> {
                 Center(child: Text(message, textAlign: TextAlign.center)),
                 const SizedBox(height: 12),
                 Center(
-                  child: OutlinedButton(onPressed: _reload, child: const Text('Reintentar')),
+                  child: OutlinedButton(
+                    onPressed: _reload,
+                    child: const Text('Reintentar'),
+                  ),
                 ),
               ],
             );
@@ -58,7 +66,9 @@ class _CourtsScreenState extends State<CourtsScreen> {
 
           final courts = snapshot.data ?? [];
           if (courts.isEmpty) {
-            return const Center(child: Text('No hay canchas disponibles todavía.'));
+            return const Center(
+              child: Text('No hay canchas disponibles todavía.'),
+            );
           }
 
           return ListView.builder(
@@ -79,16 +89,26 @@ class _CourtsScreenState extends State<CourtsScreen> {
                             width: 64,
                             height: 64,
                             fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => const Icon(Icons.sports_soccer, size: 40),
+                            errorBuilder: (_, __, ___) =>
+                                const Icon(Icons.sports_soccer, size: 40),
                           ),
                         )
                       : const Icon(Icons.sports_soccer, size: 40),
-                  title: Text(court.name, style: const TextStyle(fontWeight: FontWeight.bold)),
-                  subtitle: Text('${court.type} · ${court.location ?? 'Sin ubicación'}'),
-                  trailing: Text('\$${court.pricePerHour.toStringAsFixed(0)}/h'),
+                  title: Text(
+                    court.name,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: Text(
+                    '${court.type} · ${court.location ?? 'Sin ubicación'}',
+                  ),
+                  trailing: Text(
+                    '\$${court.pricePerHour.toStringAsFixed(0)}/h',
+                  ),
                   onTap: () {
                     Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => CourtDetailScreen(courtId: court.id)),
+                      MaterialPageRoute(
+                        builder: (_) => CourtDetailScreen(courtId: court.id),
+                      ),
                     );
                   },
                 ),

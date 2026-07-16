@@ -10,5 +10,13 @@
 ///   php artisan serve --host=0.0.0.0
 /// para que otros dispositivos en la red puedan alcanzarlo.
 class ApiConfig {
-  static const String baseUrl = 'http://127.0.0.1:8000/api';
+  static const String baseUrl = 'http://canchaya.test/api';
+
+  /// Locale usado para formatear fechas en la UI (ej. "lunes 15 jul").
+  static const String locale = 'es_CO';
+
+  /// Nota: el backend Laravel ya está configurado con
+  /// 'timezone' => 'America/Bogota' en config/app.php, así que las
+  /// fechas que llegan del API ya vienen en hora local de Colombia.
+  /// No se necesita conversión de zona horaria en el frontend.
 }

@@ -17,8 +17,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _passwordController = TextEditingController();
   final _passwordConfirmController = TextEditingController();
 
+  static final _emailRegex = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
+
+  @override
+  void initState() {
+    super.initState();
+    // Revalida "confirmar contraseña" si el usuario edita la contraseña
+    // original después de haber escrito la confirmación.
+    _passwordController.addListener(_revalidateConfirmIfTouched);
+  }
+
+  void _revalidateConfirmIfTouched() {
+    if (_passwordConfirmController.text.isNotEmpty) {
+      _formKey.currentState?.validate();
+    }
+  }
+
   @override
   void dispose() {
+    _passwordController.removeListener(_revalidateConfirmIfTouched);
     _nameController.dispose();
     _emailController.dispose();
     _phoneController.dispose();
@@ -34,14 +51,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final ok = await auth.register(
       name: _nameController.text.trim(),
       email: _emailController.text.trim(),
-      phone: _phoneController.text.trim().isEmpty ? null : _phoneController.text.trim(),
+      phone: _phoneController.text.trim().isEmpty
+          ? null
+          : _phoneController.text.trim(),
       password: _passwordController.text,
       passwordConfirmation: _passwordConfirmController.text,
     );
 
     if (!ok && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(auth.errorMessage ?? 'No se pudo crear la cuenta')),
+        SnackBar(
+          content: Text(auth.errorMessage ?? 'No se pudo crear la cuenta'),
+        ),
       );
     } else if (mounted) {
       Navigator.of(context).pop();
@@ -64,35 +85,60 @@ class _RegisterScreenState extends State<RegisterScreen> {
               children: [
                 TextFormField(
                   controller: _nameController,
-                  decoration: const InputDecoration(labelText: 'Nombre', border: OutlineInputBorder()),
-                  validator: (v) => (v == null || v.isEmpty) ? 'Ingresa tu nombre' : null,
+                  decoration: const InputDecoration(
+                    labelText: 'Nombre',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (v) =>
+                      (v == null || v.isEmpty) ? 'Ingresa tu nombre' : null,
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(labelText: 'Correo', border: OutlineInputBorder()),
-                  validator: (v) => (v == null || v.isEmpty) ? 'Ingresa tu correo' : null,
+                  decoration: const InputDecoration(
+                    labelText: 'Correo',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (v) {
+                    if (v == null || v.isEmpty) return 'Ingresa tu correo';
+                    if (!_emailRegex.hasMatch(v))
+                      return 'Ingresa un correo válido';
+                    return null;
+                  },
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _phoneController,
                   keyboardType: TextInputType.phone,
-                  decoration: const InputDecoration(labelText: 'Teléfono (opcional)', border: OutlineInputBorder()),
+                  decoration: const InputDecoration(
+                    labelText: 'Teléfono (opcional)',
+                    border: OutlineInputBorder(),
+                  ),
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _passwordController,
                   obscureText: true,
-                  decoration: const InputDecoration(labelText: 'Contraseña', border: OutlineInputBorder()),
-                  validator: (v) => (v == null || v.length < 8) ? 'Mínimo 8 caracteres' : null,
+                  decoration: const InputDecoration(
+                    labelText: 'Contraseña',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (v) => (v == null || v.length < 8)
+                      ? 'Mínimo 8 caracteres'
+                      : null,
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _passwordConfirmController,
                   obscureText: true,
-                  decoration: const InputDecoration(labelText: 'Confirmar contraseña', border: OutlineInputBorder()),
-                  validator: (v) => v != _passwordController.text ? 'Las contraseñas no coinciden' : null,
+                  decoration: const InputDecoration(
+                    labelText: 'Confirmar contraseña',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (v) => v != _passwordController.text
+                      ? 'Las contraseñas no coinciden'
+                      : null,
                 ),
                 const SizedBox(height: 24),
                 FilledButton(
@@ -101,7 +147,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ? const SizedBox(
                           height: 20,
                           width: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
                         )
                       : const Text('Crear cuenta'),
                 ),

@@ -15,6 +15,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
+  static final _emailRegex = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
+
   @override
   void dispose() {
     _emailController.dispose();
@@ -26,11 +28,16 @@ class _LoginScreenState extends State<LoginScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     final auth = context.read<AuthProvider>();
-    final ok = await auth.login(_emailController.text.trim(), _passwordController.text);
+    final ok = await auth.login(
+      _emailController.text.trim(),
+      _passwordController.text,
+    );
 
     if (!ok && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(auth.errorMessage ?? 'No se pudo iniciar sesión')),
+        SnackBar(
+          content: Text(auth.errorMessage ?? 'No se pudo iniciar sesión'),
+        ),
       );
     }
     // Si tiene éxito, el widget raíz (main.dart) reacciona al cambio de
@@ -52,7 +59,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Icon(Icons.sports_soccer, size: 64, color: Colors.green),
+                  const Icon(
+                    Icons.sports_soccer,
+                    size: 64,
+                    color: Colors.green,
+                  ),
                   const SizedBox(height: 12),
                   Text(
                     'CanchaYa',
@@ -63,15 +74,28 @@ class _LoginScreenState extends State<LoginScreen> {
                   TextFormField(
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
-                    decoration: const InputDecoration(labelText: 'Correo', border: OutlineInputBorder()),
-                    validator: (v) => (v == null || v.isEmpty) ? 'Ingresa tu correo' : null,
+                    decoration: const InputDecoration(
+                      labelText: 'Correo',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (v) {
+                      if (v == null || v.isEmpty) return 'Ingresa tu correo';
+                      if (!_emailRegex.hasMatch(v))
+                        return 'Ingresa un correo válido';
+                      return null;
+                    },
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _passwordController,
                     obscureText: true,
-                    decoration: const InputDecoration(labelText: 'Contraseña', border: OutlineInputBorder()),
-                    validator: (v) => (v == null || v.isEmpty) ? 'Ingresa tu contraseña' : null,
+                    decoration: const InputDecoration(
+                      labelText: 'Contraseña',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (v) => (v == null || v.isEmpty)
+                        ? 'Ingresa tu contraseña'
+                        : null,
                   ),
                   const SizedBox(height: 24),
                   FilledButton(
@@ -80,7 +104,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         ? const SizedBox(
                             height: 20,
                             width: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
                           )
                         : const Text('Entrar'),
                   ),
@@ -88,7 +115,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   TextButton(
                     onPressed: () {
                       Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => const RegisterScreen()),
+                        MaterialPageRoute(
+                          builder: (_) => const RegisterScreen(),
+                        ),
                       );
                     },
                     child: const Text('¿No tienes cuenta? Regístrate'),

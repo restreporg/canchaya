@@ -6,7 +6,10 @@ import '../services/auth_service.dart';
 enum AuthStatus { unknown, authenticated, unauthenticated }
 
 class AuthProvider extends ChangeNotifier {
-  final _authService = AuthService();
+  AuthProvider({AuthService? authService})
+    : _authService = authService ?? AuthService();
+
+  final AuthService _authService;
 
   AppUser? user;
   AuthStatus status = AuthStatus.unknown;
@@ -17,7 +20,9 @@ class AuthProvider extends ChangeNotifier {
   Future<void> tryAutoLogin() async {
     final currentUser = await _authService.getCurrentUser();
     user = currentUser;
-    status = currentUser != null ? AuthStatus.authenticated : AuthStatus.unauthenticated;
+    status = currentUser != null
+        ? AuthStatus.authenticated
+        : AuthStatus.unauthenticated;
     notifyListeners();
   }
 

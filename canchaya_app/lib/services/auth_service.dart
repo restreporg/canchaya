@@ -13,13 +13,16 @@ class AuthService {
     String? phone,
   }) async {
     try {
-      final res = await _client.dio.post('/register', data: {
-        'name': name,
-        'email': email,
-        'phone': phone,
-        'password': password,
-        'password_confirmation': passwordConfirmation,
-      });
+      final res = await _client.dio.post(
+        '/register',
+        data: {
+          'name': name,
+          'email': email,
+          'phone': phone,
+          'password': password,
+          'password_confirmation': passwordConfirmation,
+        },
+      );
 
       final token = res.data['token'] as String;
       await _client.saveToken(token);
@@ -29,12 +32,15 @@ class AuthService {
     }
   }
 
-  Future<AppUser> login({required String email, required String password}) async {
+  Future<AppUser> login({
+    required String email,
+    required String password,
+  }) async {
     try {
-      final res = await _client.dio.post('/login', data: {
-        'email': email,
-        'password': password,
-      });
+      final res = await _client.dio.post(
+        '/login',
+        data: {'email': email, 'password': password},
+      );
 
       final token = res.data['token'] as String;
       await _client.saveToken(token);
@@ -50,7 +56,7 @@ class AuthService {
 
     try {
       final res = await _client.dio.get('/me');
-      return AppUser.fromJson(res.data);
+      return AppUser.fromJson(res.data['user']);
     } on DioException {
       // Token inválido o expirado: lo limpiamos.
       await _client.clearToken();

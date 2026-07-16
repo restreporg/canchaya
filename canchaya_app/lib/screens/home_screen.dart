@@ -32,13 +32,19 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: _pages[_index],
+      body: IndexedStack(index: _index, children: _pages),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _index,
         onDestinationSelected: (i) => setState(() => _index = i),
         destinations: const [
-          NavigationDestination(icon: Icon(Icons.sports_soccer), label: 'Canchas'),
-          NavigationDestination(icon: Icon(Icons.event_note), label: 'Reservas'),
+          NavigationDestination(
+            icon: Icon(Icons.sports_soccer),
+            label: 'Canchas',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.event_note),
+            label: 'Reservas',
+          ),
         ],
       ),
     );
