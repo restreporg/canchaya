@@ -1,0 +1,14 @@
+/// Cambia esta URL según dónde estés corriendo la app:
+///
+/// - Emulador Android            -> http://10.0.2.2:8000/api
+/// - Emulador iOS / Chrome web   -> http://127.0.0.1:8000/api
+/// - Celular físico (misma WiFi) -> http://TU_IP_LOCAL:8000/api
+///                                  (mira tu IP con "ipconfig" en PowerShell,
+///                                   busca "Dirección IPv4", ej. 192.168.1.15)
+///
+/// Recuerda que tu backend debe estar corriendo con:
+///   php artisan serve --host=0.0.0.0
+/// para que otros dispositivos en la red puedan alcanzarlo.
+class ApiConfig {
+  static const String baseUrl = 'http://127.0.0.1:8000/api';
+}
