@@ -80,8 +80,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     validator: (v) {
                       if (v == null || v.isEmpty) return 'Ingresa tu correo';
-                      if (!_emailRegex.hasMatch(v))
+                      if (!_emailRegex.hasMatch(v)) {
                         return 'Ingresa un correo válido';
+                      }
                       return null;
                     },
                   ),
