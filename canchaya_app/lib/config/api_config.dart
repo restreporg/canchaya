@@ -10,7 +10,7 @@
 ///   php artisan serve --host=0.0.0.0
 /// para que otros dispositivos en la red puedan alcanzarlo.
 class ApiConfig {
-  static const String baseUrl = 'http://canchaya.test/api';
+  static const String baseUrl = 'http://127.0.0.1:8000/api';
 
   /// Locale usado para formatear fechas en la UI (ej. "lunes 15 jul").
   static const String locale = 'es_CO';
