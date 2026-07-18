@@ -50,6 +50,7 @@ Los administradores cuentan con un panel completo para gestionar canchas, horari
 - Composer
 - Node.js
 - WAMP / Laravel Herd / cualquier servidor local
+- Laravel Herd
 
 # Pasos
 
@@ -149,12 +150,13 @@ Este proyecto incluye una colección de Insomnia (`Reservas Canchas API`) con to
 2. Define al menos las siguientes variables:
    ```json
    {
-     "base_url": "http://127.0.0.1:8000/api",
+     "base_url": "https://canchaya.test/api",
      "token": ""
    }
    ```
 3. Deja `token` vacío por ahora; se llenará automáticamente en el paso siguiente.
 4. En cada request, la URL debe usar la variable, por ejemplo: `{{ _.base_url }}/reservations`.
+5. (PARA EJECUTAR LA API REST SE DEBE HACER LAS PRUEBAS CON EL SERVIDOR DE LARAVEL HERD)
 
 ## 3. Obtener el token (Login)
 
@@ -182,7 +184,7 @@ Este proyecto incluye una colección de Insomnia (`Reservas Canchas API`) con to
 2. Pega el valor copiado en la variable `token`:
    ```json
    {
-     "base_url": "http://127.0.0.1:8000/api",
+     "base_url": "https://canchaya.test/api",
      "token": "1|AbCdEf123456..."
    }
    ```
