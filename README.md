@@ -145,6 +145,7 @@ Este proyecto incluye una colección de Insomnia (`Reservas Canchas API`) con to
 4. Verifica que aparezcan las carpetas: `01 - Público`, `02 - Cliente` y `03 - Admin` (según corresponda) con sus respectivos requests.
 
 ## 2. Configurar el entorno base (Base Environment)
+(PARA EJECUTAR LA API REST SE DEBE HACER LAS PRUEBAS CON EL SERVIDOR DE LARAVEL HERD)
 
 1. Haz clic en `Base Environment` en la parte superior del workspace.
 2. Define al menos las siguientes variables:
@@ -156,7 +157,7 @@ Este proyecto incluye una colección de Insomnia (`Reservas Canchas API`) con to
    ```
 3. Deja `token` vacío por ahora; se llenará automáticamente en el paso siguiente.
 4. En cada request, la URL debe usar la variable, por ejemplo: `{{ _.base_url }}/reservations`.
-5. (PARA EJECUTAR LA API REST SE DEBE HACER LAS PRUEBAS CON EL SERVIDOR DE LARAVEL HERD)
+
 
 ## 3. Obtener el token (Login)
 
