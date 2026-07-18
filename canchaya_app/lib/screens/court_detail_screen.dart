@@ -57,7 +57,6 @@ class _CourtDetailScreenState extends State<CourtDetailScreen> {
     }
   }
 
-  /// Arma el DateTime combinando la fecha elegida con la hora dada.
   DateTime _combine(DateTime date, TimeOfDay time) {
     return DateTime(date.year, date.month, date.day, time.hour, time.minute);
   }
@@ -75,7 +74,6 @@ class _CourtDetailScreenState extends State<CourtDetailScreen> {
     final start = _combine(_selectedDate!, _startTime!);
     final end = _combine(_selectedDate!, _endTime!);
 
-    // La hora de fin debe ser después de la hora de inicio.
     if (!end.isAfter(start)) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -87,7 +85,6 @@ class _CourtDetailScreenState extends State<CourtDetailScreen> {
       return;
     }
 
-    // No se puede reservar un horario que ya pasó.
     if (start.isBefore(DateTime.now())) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -125,6 +122,28 @@ class _CourtDetailScreenState extends State<CourtDetailScreen> {
     }
   }
 
+  // Mismo mapeo de colores/íconos que en courts_screen.dart, para consistencia.
+  (Color bg, Color accent, IconData icon) _sportStyle(String type) {
+    switch (type.toLowerCase()) {
+      case 'futbol':
+      case 'fútbol':
+        return (const Color(0xFFD1FAE5), const Color(0xFF059669), Icons.sports_soccer);
+      case 'tenis':
+        return (const Color(0xFFFEF3C7), const Color(0xFFD97706), Icons.sports_tennis);
+      case 'basketball':
+      case 'baloncesto':
+        return (const Color(0xFFFEE2E2), const Color(0xFFDC2626), Icons.sports_basketball);
+      case 'padel':
+      case 'pádel':
+        return (const Color(0xFFE0E7FF), const Color(0xFF4F46E5), Icons.sports_tennis);
+      default:
+        return (const Color(0xFFF3F4F6), const Color(0xFF6B7280), Icons.sports);
+    }
+  }
+
+  String _capitalize(String s) =>
+      s.isEmpty ? s : '${s[0].toUpperCase()}${s.substring(1)}';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -140,95 +159,167 @@ class _CourtDetailScreenState extends State<CourtDetailScreen> {
           }
 
           final court = snapshot.data!;
+          final (bg, accent, icon) = _sportStyle(court.type);
+
           return SingleChildScrollView(
             padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (court.imageUrl != null)
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Image.network(
-                      court.imageUrl!,
-                      height: 180,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                const SizedBox(height: 16),
-                Text(
-                  court.name,
-                  style: Theme.of(context).textTheme.headlineSmall,
+                // Bloque superior: imagen real, o el mismo estilo pastel
+                // que usamos en las tarjetas de courts_screen.dart.
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: court.imageUrl != null
+                      ? Image.network(
+                          court.imageUrl!,
+                          height: 180,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => Container(
+                            height: 180,
+                            width: double.infinity,
+                            color: bg,
+                            child: Center(
+                              child: Icon(icon, size: 64, color: accent),
+                            ),
+                          ),
+                        )
+                      : Container(
+                          height: 180,
+                          width: double.infinity,
+                          color: bg,
+                          child: Center(
+                            child: Icon(icon, size: 64, color: accent),
+                          ),
+                        ),
                 ),
-                const SizedBox(height: 4),
-                Text('${court.type} · ${court.location ?? 'Sin ubicación'}'),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        court.name,
+                        style: Theme.of(context).textTheme.headlineSmall,
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: bg,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        _capitalize(court.type),
+                        style: TextStyle(
+                          color: accent,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                Row(
+                  children: [
+                    Icon(Icons.location_on_outlined,
+                        size: 16, color: Colors.grey[600]),
+                    const SizedBox(width: 4),
+                    Text(
+                      court.location ?? 'Sin ubicación',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 8),
                 Text(
                   '\$${court.pricePerHour.toStringAsFixed(0)} / hora',
                   style: const TextStyle(
+                    color: Color(0xFF059669),
                     fontWeight: FontWeight.bold,
-                    fontSize: 16,
+                    fontSize: 18,
                   ),
                 ),
                 if (court.description != null) ...[
                   const SizedBox(height: 12),
                   Text(court.description!),
                 ],
-                const Divider(height: 32),
-                Text(
-                  'Reservar',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                const SizedBox(height: 12),
-                OutlinedButton.icon(
-                  onPressed: _pickDate,
-                  icon: const Icon(Icons.calendar_today),
-                  label: Text(
-                    _selectedDate == null
-                        ? 'Elegir fecha'
-                        : DateFormat(
-                            'EEEE d MMM yyyy',
-                            ApiConfig.locale,
-                          ).format(_selectedDate!),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton.icon(
-                        onPressed: () => _pickTime(true),
-                        icon: const Icon(Icons.access_time),
-                        label: Text(
-                          _startTime?.format(context) ?? 'Hora inicio',
+                const SizedBox(height: 24),
+
+                // Formulario de reserva agrupado en tarjeta.
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Reservar',
+                          style: Theme.of(context).textTheme.titleMedium,
                         ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: OutlinedButton.icon(
-                        onPressed: () => _pickTime(false),
-                        icon: const Icon(Icons.access_time_filled),
-                        label: Text(_endTime?.format(context) ?? 'Hora fin'),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                FilledButton(
-                  onPressed: _submitting
-                      ? null
-                      : () => _confirmReservation(court.id),
-                  child: _submitting
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.white,
+                        const SizedBox(height: 12),
+                        OutlinedButton.icon(
+                          onPressed: _pickDate,
+                          icon: const Icon(Icons.calendar_today),
+                          label: Text(
+                            _selectedDate == null
+                                ? 'Elegir fecha'
+                                : DateFormat(
+                                    'EEEE d MMM yyyy',
+                                    ApiConfig.locale,
+                                  ).format(_selectedDate!),
                           ),
-                        )
-                      : const Text('Confirmar reserva'),
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: OutlinedButton.icon(
+                                onPressed: () => _pickTime(true),
+                                icon: const Icon(Icons.access_time),
+                                label: Text(
+                                  _startTime?.format(context) ?? 'Hora inicio',
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: OutlinedButton.icon(
+                                onPressed: () => _pickTime(false),
+                                icon: const Icon(Icons.access_time_filled),
+                                label: Text(
+                                    _endTime?.format(context) ?? 'Hora fin'),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        SizedBox(
+                          width: double.infinity,
+                          child: FilledButton(
+                            onPressed: _submitting
+                                ? null
+                                : () => _confirmReservation(court.id),
+                            child: _submitting
+                                ? const SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                : const Text('Confirmar reserva'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ],
             ),
