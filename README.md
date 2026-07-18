@@ -50,6 +50,7 @@ Los administradores cuentan con un panel completo para gestionar canchas, horari
 - Composer
 - Node.js
 - WAMP / Laravel Herd / cualquier servidor local
+- Laravel Herd
 
 # Pasos
 
@@ -130,6 +131,91 @@ php artisan serve
 - "/client/" — requiere estar autenticado.
 - Un cliente no puede acceder a reservas de otros clientes (Policy)
 
+---
+
+# Uso de Insomnia para probar la API
+
+Este proyecto incluye una colección de Insomnia (`Reservas Canchas API`) con todos los endpoints organizados por módulo (Autenticación, Explorar canchas, Cliente, Admin, etc). A continuación se explica cómo importarla, configurarla y, en especial, cómo manejar el **token de autenticación** para probar rutas protegidas.
+
+## 1. Importar la colección
+
+1. Abre Insomnia.
+2. Ve a `Application > Preferences` o usa el botón `+` junto a las pestañas para crear un nuevo proyecto/importar.
+3. Selecciona `Import` y elige el archivo de la colección exportada (`.json` o `.yaml`) que se encuentra en la carpeta del repositorio (o clónala directamente si el proyecto está vinculado por Git Sync).
+4. Verifica que aparezcan las carpetas: `01 - Público`, `02 - Cliente` y `03 - Admin` (según corresponda) con sus respectivos requests.
+
+## 2. Configurar el entorno base (Base Environment)
+(PARA EJECUTAR LA API REST SE DEBE HACER LAS PRUEBAS CON EL SERVIDOR DE LARAVEL HERD)
+
+1. Haz clic en `Base Environment` en la parte superior del workspace.
+2. Define al menos las siguientes variables:
+   ```json
+   {
+     "base_url": "https://canchaya.test/api",
+     "token": ""
+   }
+   ```
+3. Deja `token` vacío por ahora; se llenará automáticamente en el paso siguiente.
+4. En cada request, la URL debe usar la variable, por ejemplo: `{{ _.base_url }}/reservations`.
+
+
+## 3. Obtener el token (Login)
+
+1. Levanta el servidor local con `php artisan serve`.
+2. En la carpeta `1. Autenticación`, abre el request **`2. Login`**.
+3. En el `Body` (normalmente `JSON`), ingresa las credenciales de prueba, por ejemplo:
+   ```json
+   {
+     "email": "carlos@gmail.com",
+     "password": "password"
+   }
+   ```
+4. Presiona `Send`. Si Laravel usa Sanctum/Passport, la respuesta traerá algo como:
+   ```json
+   {
+     "user": { "id": 1, "name": "Carlos", "role": "cliente" },
+     "token": "1|AbCdEf123456..."
+   }
+   ```
+5. **Copia el valor de `token`** (sin las comillas).
+
+## 4. Guardar el token en el entorno (para no pegarlo en cada request)
+
+1. Vuelve a `Base Environment` (o crea un `Environment` específico como "Cliente" o "Admin" si vas a probar ambos roles).
+2. Pega el valor copiado en la variable `token`:
+   ```json
+   {
+     "base_url": "https://canchaya.test/api",
+     "token": "1|AbCdEf123456..."
+   }
+   ```
+3. Guarda los cambios.
+
+> 💡 **Tip:** también puedes automatizar esto usando un script en la pestaña `Tests`/`After Response` del request de Login para que Insomnia guarde el token automáticamente en la variable de entorno cada vez que hagas login, sin copiar y pegar manualmente.
+
+## 5. Usar el token en las rutas protegidas
+
+1. Abre cualquier request que requiera autenticación (por ejemplo, `3. Me` o cualquier endpoint dentro de `02 - Cliente` o `03 - Admin`).
+2. Ve a la pestaña `Auth` del request.
+3. Selecciona el tipo `Bearer Token`.
+4. En el campo `Token`, escribe: `{{ _.token }}` (esto hace referencia a la variable que guardaste en el entorno).
+5. Presiona `Send`. Si el token es válido, la petición debe responder con status `200 OK` y los datos del usuario o recurso solicitado.
+
+Si prefieres no configurar `Auth` en cada request individualmente, puedes definir el `Bearer Token` a nivel de carpeta (clic derecho sobre la carpeta `02 - Cliente` → `Edit` → pestaña `Auth`), y todos los requests dentro heredarán esa configuración automáticamente.
+
+## 6. Verificar expiración o token inválido
+
+- Si obtienes un `401 Unauthorized`, el token pudo haber expirado o la sesión fue cerrada (`4. Logout`). En ese caso, repite el paso 3 (Login) para obtener un token nuevo.
+- Recuerda que si usas `Logout`, el token actual queda invalidado en el backend y ya no servirá para las siguientes peticiones.
+
+## 7. Probar con distintos roles
+
+Como el proyecto maneja roles (`admin` y `cliente`), se recomienda:
+- Crear **dos entornos distintos** en Insomnia (`Entorno Cliente` y `Entorno Admin`), cada uno con su propio `token`.
+- Iniciar sesión con las credenciales correspondientes de la tabla de credenciales de prueba y guardar el token en el entorno correspondiente.
+- Cambiar de entorno desde el selector superior (`Base Environment`) según qué rol quieras probar.
+
+---
 
 # IMAGENES DEL PROYECTO
 

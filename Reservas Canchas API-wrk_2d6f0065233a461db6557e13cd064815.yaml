@@ -1,0 +1,892 @@
+type: collection.insomnia.rest/5.0
+schema_version: "5.1"
+name: Reservas Canchas API
+meta:
+  id: wrk_2d6f0065233a461db6557e13cd064815
+  created: 1784304383265
+  modified: 1784304383265
+  description: ""
+collection:
+  - name: 01 - Público
+    meta:
+      id: fld_39f1344e1ea942459a6d9454762eba65
+      created: 1784304383281
+      modified: 1784304383281
+      sortKey: 100
+      description: ""
+    children:
+      - name: 1. Autenticación
+        meta:
+          id: fld_e3a267fb92df4fbe9b51653770d3cf3a
+          created: 1784304383287
+          modified: 1784304383287
+          sortKey: 110
+          description: ""
+        children:
+          - url: "{{ _.base_url }}/register"
+            name: 1. Register
+            meta:
+              id: req_fa3cbe5de51f411e925e5af077942ec4
+              created: 1784304383289
+              modified: 1784304383289
+              isPrivate: false
+              description: ""
+              sortKey: 111
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"name": "Juan Perez",
+                	"email": "juan@example.com",
+                	"password": "password123",
+                	"password_confirmation": "password123"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/login"
+            name: 2. Login
+            meta:
+              id: req_272f49c7516442e0bebd58fd3665247d
+              created: 1784304383290
+              modified: 1784304383290
+              isPrivate: false
+              description: ""
+              sortKey: 112
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"email": "admin@canchaya.com",
+                	"password": "password"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/me"
+            name: 3. Me (perfil autenticado)
+            meta:
+              id: req_3c435a02d7a847ed8cf3065cec2753c1
+              created: 1784304383293
+              modified: 1784304383293
+              isPrivate: false
+              description: ""
+              sortKey: 113
+            method: GET
+            authentication:
+              type: bearer
+              token: "{{ _.token }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/logout"
+            name: 4. Logout
+            meta:
+              id: req_f1d88d4b89d34ab5b1364d19c892be4f
+              created: 1784304383295
+              modified: 1784304383295
+              isPrivate: false
+              description: ""
+              sortKey: 114
+            method: POST
+            authentication:
+              type: bearer
+              token: "{{ _.token }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+      - name: 2. Explorar canchas
+        meta:
+          id: fld_4719ad5489d64400ad31054d051f2499
+          created: 1784304383298
+          modified: 1784304383298
+          sortKey: 120
+          description: ""
+        children:
+          - url: "{{ _.base_url }}/courts"
+            name: 1. Listar canchas
+            meta:
+              id: req_978bdd64fdfb4e789092cf7243e0b61d
+              created: 1784304383300
+              modified: 1784304383300
+              isPrivate: false
+              description: ""
+              sortKey: 121
+            method: GET
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/courts/{{ _.court_id }}"
+            name: 2. Ver cancha
+            meta:
+              id: req_9a0c1226f6cd4162bee6db363ccadb9e
+              created: 1784304383302
+              modified: 1784304383302
+              isPrivate: false
+              description: ""
+              sortKey: 122
+            method: GET
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+    headers:
+      - name: Accept
+        value: application/json
+  - name: 02 - Cliente
+    meta:
+      id: fld_3dfe0c1bbceb4e659961f3ee09a1f4d2
+      created: 1784304383283
+      modified: 1784304383283
+      sortKey: 200
+      description: ""
+    children:
+      - name: 1. Reservas
+        meta:
+          id: fld_170c6454457e4a2393d4f4cf9706a9fd
+          created: 1784304383303
+          modified: 1784304383303
+          sortKey: 210
+          description: ""
+        children:
+          - url: "{{ _.base_url }}/client/reservations"
+            name: 1. Crear reserva
+            meta:
+              id: req_e7b86a04b5874a4497cdffc1a9ce5d2b
+              created: 1784304383304
+              modified: 1784304383304
+              isPrivate: false
+              description: ""
+              sortKey: 211
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"court_id": 1,
+                	"start_datetime": "2026-08-01 10:00:00",
+                	"end_datetime": "2026-08-01 11:00:00"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/client/reservations"
+            name: 2. Listar mis reservas
+            meta:
+              id: req_0081a5d28689404db627de30ae2ca1ae
+              created: 1784304383305
+              modified: 1784304383305
+              isPrivate: false
+              description: ""
+              sortKey: 212
+            method: GET
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/client/reservations/{{ _.reservation_id }}"
+            name: 3. Ver reserva
+            meta:
+              id: req_122b5134be914eb69760e3917088c00b
+              created: 1784304383306
+              modified: 1784304383306
+              isPrivate: false
+              description: ""
+              sortKey: 213
+            method: GET
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/client/reservations/{{ _.reservation_id }}"
+            name: 4. Cancelar reserva
+            meta:
+              id: req_e441a6e0ca3b473bb7a35edad6cf8bdf
+              created: 1784304383309
+              modified: 1784304383309
+              isPrivate: false
+              description: ""
+              sortKey: 214
+            method: DELETE
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+      - name: 2. Pagos
+        meta:
+          id: fld_bdac7e81774c4afe9d9062427ab52d05
+          created: 1784304383311
+          modified: 1784304383311
+          sortKey: 220
+          description: ""
+        children:
+          - url: "{{ _.base_url }}/client/reservations/{{ _.reservation_id }}/payment"
+            name: 1. Registrar pago
+            meta:
+              id: req_29c07bcc4d3745c88e5319755219efea
+              created: 1784304383312
+              modified: 1784304383312
+              isPrivate: false
+              description: ""
+              sortKey: 221
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"method": "tarjeta"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/client/reservations/{{ _.reservation_id }}/payment"
+            name: 2. Ver pago de reserva
+            meta:
+              id: req_a0793165dcd34fe3a13de7ba7df315d3
+              created: 1784304383313
+              modified: 1784304383313
+              isPrivate: false
+              description: ""
+              sortKey: 222
+            method: GET
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+      - name: 3. Reseñas
+        meta:
+          id: fld_9d7e6eead30d465a84aef2a8a3f14982
+          created: 1784304383314
+          modified: 1784304383314
+          sortKey: 230
+          description: ""
+        children:
+          - url: "{{ _.base_url }}/client/reservations/{{ _.reservation_id }}/reviews"
+            name: 1. Crear reseña
+            meta:
+              id: req_7fc174d7461d4d98aa46f5f0c1125121
+              created: 1784304383316
+              modified: 1784304383316
+              isPrivate: false
+              description: ""
+              sortKey: 231
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"rating": 5,
+                	"comment": "Excelente cancha, muy bien mantenida."
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/client/reviews/{{ _.review_id }}"
+            name: 2. Eliminar reseña
+            meta:
+              id: req_ca14e5d3b204408cb94b3071957fe689
+              created: 1784304383318
+              modified: 1784304383318
+              isPrivate: false
+              description: ""
+              sortKey: 232
+            method: DELETE
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+    authentication:
+      type: bearer
+      token: "{{ _.token }}"
+    headers:
+      - name: Accept
+        value: application/json
+  - name: 03 - Admin
+    meta:
+      id: fld_0e77695171b1464f83517647babc181d
+      created: 1784304383285
+      modified: 1784304383285
+      sortKey: 300
+      description: ""
+    children:
+      - name: 1. Courts
+        meta:
+          id: fld_ee697dcbbc8e44ca97b344e99948da2a
+          created: 1784304383319
+          modified: 1784304383319
+          sortKey: 310
+          description: ""
+        children:
+          - url: "{{ _.base_url }}/admin/courts"
+            name: 1. Crear cancha
+            meta:
+              id: req_167136ac5ee747aca58b8ac3350b93cf
+              created: 1784304383320
+              modified: 1784304383320
+              isPrivate: false
+              description: ""
+              sortKey: 311
+            method: POST
+            body:
+              mimeType: multipart/form-data
+              params:
+                - name: name
+                  value: Cancha Central
+                - name: type
+                  value: Fútbol
+                - name: price_per_hour
+                  value: "40000"
+                - name: location
+                  value: Envigado, Antioquia
+                - name: description
+                  value: Cancha techada de sintético
+                - name: image
+                  disabled: true
+                  fileName: ""
+                  type: file
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/admin/courts"
+            name: 2. Listar canchas (admin)
+            meta:
+              id: req_91f2535645cc427c88ec5cd32c9f796e
+              created: 1784304383322
+              modified: 1784304383322
+              isPrivate: false
+              description: ""
+              sortKey: 312
+            method: GET
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/admin/courts/{{ _.court_id }}"
+            name: 3. Ver cancha (admin)
+            meta:
+              id: req_634727a62214417b80ceceec9da5bde7
+              created: 1784304383324
+              modified: 1784304383324
+              isPrivate: false
+              description: ""
+              sortKey: 313
+            method: GET
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/admin/courts/{{ _.court_id }}"
+            name: 4. Actualizar cancha
+            meta:
+              id: req_c860be76c9de498aa811d9deb792748a
+              created: 1784304383326
+              modified: 1784304383326
+              isPrivate: false
+              description: ""
+              sortKey: 314
+            method: PUT
+            body:
+              mimeType: application/json
+              text: >-
+                {
+                	"name": "Cancha Central Renovada",
+                	"type": "Fútbol",
+                	"price_per_hour": 45000,
+                	"location": "Envigado, Antioquia",
+                	"description": "Cancha techada de sintético, recién remodelada",
+                	"is_active": true
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/admin/courts/{{ _.court_id }}/image"
+            name: 5. Eliminar imagen de cancha
+            meta:
+              id: req_d1f4d5e2ca2f4339bc15403efce402a8
+              created: 1784304383328
+              modified: 1784304383328
+              isPrivate: false
+              description: ""
+              sortKey: 315
+            method: DELETE
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/admin/courts/{{ _.court_id }}"
+            name: 6. Eliminar cancha
+            meta:
+              id: req_d7ded78613984e72b1ac0470a58746d3
+              created: 1784304383330
+              modified: 1784304383330
+              isPrivate: false
+              description: ""
+              sortKey: 316
+            method: DELETE
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+      - name: 2. Horarios (schedules)
+        meta:
+          id: fld_2c6a602b301a4b55b09657bfb4d8a116
+          created: 1784304383331
+          modified: 1784304383331
+          sortKey: 320
+          description: ""
+        children:
+          - url: "{{ _.base_url }}/admin/courts/{{ _.court_id }}/schedules"
+            name: 1. Crear horario
+            meta:
+              id: req_09e570ef7ad642788977946f1a78461f
+              created: 1784304383333
+              modified: 1784304383333
+              isPrivate: false
+              description: ""
+              sortKey: 321
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"day_of_week": 1,
+                	"open_time": "08:00",
+                	"close_time": "22:00",
+                	"is_available": true
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/admin/courts/{{ _.court_id }}/schedules"
+            name: 2. Listar horarios de cancha
+            meta:
+              id: req_3d0df36077fa4b21b58a4a3aaf8fce41
+              created: 1784304383334
+              modified: 1784304383334
+              isPrivate: false
+              description: ""
+              sortKey: 322
+            method: GET
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/admin/courts/{{ _.court_id }}/schedules/{{ _.schedule_id
+              }}"
+            name: 3. Actualizar horario
+            meta:
+              id: req_ebb01ce687ec4acc83392ef32e56a406
+              created: 1784304383335
+              modified: 1784304383335
+              isPrivate: false
+              description: ""
+              sortKey: 323
+            method: PUT
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"open_time": "09:00",
+                	"close_time": "21:00"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/admin/courts/{{ _.court_id }}/schedules/{{ _.schedule_id
+              }}"
+            name: 4. Eliminar horario
+            meta:
+              id: req_0b9106bef7784f06a8ee87c7b1e09d63
+              created: 1784304383337
+              modified: 1784304383337
+              isPrivate: false
+              description: ""
+              sortKey: 324
+            method: DELETE
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+      - name: 3. Reservas
+        meta:
+          id: fld_2ee8be070b164d7d80631c5d2fd6bb85
+          created: 1784304383338
+          modified: 1784304383338
+          sortKey: 330
+          description: ""
+        children:
+          - url: "{{ _.base_url }}/admin/reservations"
+            name: 1. Listar reservas (admin)
+            meta:
+              id: req_7226811df11740d7a627ba5ae82e6b96
+              created: 1784304383339
+              modified: 1784304383339
+              isPrivate: false
+              description: ""
+              sortKey: 331
+            method: GET
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/admin/reservations/{{ _.reservation_id }}"
+            name: 2. Ver reserva (admin)
+            meta:
+              id: req_2b3f6bf6f7cf43049eac19ab5f09d77e
+              created: 1784304383341
+              modified: 1784304383341
+              isPrivate: false
+              description: ""
+              sortKey: 332
+            method: GET
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/admin/reservations/{{ _.reservation_id }}"
+            name: 3. Actualizar reserva
+            meta:
+              id: req_caf9761aa8964b7d98a108e5b30f0bb5
+              created: 1784304383343
+              modified: 1784304383343
+              isPrivate: false
+              description: ""
+              sortKey: 333
+            method: PUT
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"status": "confirmada"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/admin/reservations/{{ _.reservation_id }}"
+            name: 4. Eliminar reserva
+            meta:
+              id: req_42a1bd7fdd3b48a3884ddc0ac8d16e8a
+              created: 1784304383345
+              modified: 1784304383345
+              isPrivate: false
+              description: ""
+              sortKey: 334
+            method: DELETE
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+      - name: 4. Pagos
+        meta:
+          id: fld_78ae7d724eb648dd92df4ace047c4b3c
+          created: 1784304383346
+          modified: 1784304383346
+          sortKey: 340
+          description: ""
+        children:
+          - url: "{{ _.base_url }}/admin/payments"
+            name: 1. Listar pagos
+            meta:
+              id: req_51b6640169c641cf8c085294f337c755
+              created: 1784304383348
+              modified: 1784304383348
+              isPrivate: false
+              description: ""
+              sortKey: 341
+            method: GET
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/admin/payments/{{ _.payment_id }}"
+            name: 2. Ver pago
+            meta:
+              id: req_17d1c9e89a5442dba07dc7a73df70033
+              created: 1784304383350
+              modified: 1784304383350
+              isPrivate: false
+              description: ""
+              sortKey: 342
+            method: GET
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/admin/payments/{{ _.payment_id }}"
+            name: 3. Actualizar pago
+            meta:
+              id: req_95187f6a9b264cc2bba7e4a6749bab2e
+              created: 1784304383352
+              modified: 1784304383352
+              isPrivate: false
+              description: ""
+              sortKey: 343
+            method: PUT
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"status": "pagado"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+      - name: 5. Reseñas
+        meta:
+          id: fld_afc178061b9f4d0cbb0ac2792b0dc8bb
+          created: 1784304383355
+          modified: 1784304383355
+          sortKey: 350
+          description: ""
+        children:
+          - url: "{{ _.base_url }}/admin/reviews"
+            name: 1. Listar reseñas
+            meta:
+              id: req_5bb049a45d244028bb44a114a7d69855
+              created: 1784304383357
+              modified: 1784304383357
+              isPrivate: false
+              description: ""
+              sortKey: 351
+            method: GET
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/admin/reviews/{{ _.review_id }}"
+            name: 2. Ver reseña
+            meta:
+              id: req_a696615edd2b4219bd06a1c2df127d84
+              created: 1784304383361
+              modified: 1784304383361
+              isPrivate: false
+              description: ""
+              sortKey: 352
+            method: GET
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/admin/reviews/{{ _.review_id }}"
+            name: 3. Eliminar reseña
+            meta:
+              id: req_c8f731b17ab44bbf97f79b8b84a22942
+              created: 1784304383363
+              modified: 1784304383363
+              isPrivate: false
+              description: ""
+              sortKey: 353
+            method: DELETE
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+    authentication:
+      type: bearer
+      token: "{{ _.token }}"
+    headers:
+      - name: Accept
+        value: application/json
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_aed061369e2c820b5f9597ad76660c5e0a29fc40
+    created: 1784304383480
+    modified: 1784304383480
+environments:
+  name: Base Environment
+  meta:
+    id: env_e59d8dcbf159482cb5f7ba447c3dfc1c
+    created: 1784304383278
+    modified: 1784304383278
+    isPrivate: false
+  data:
+    base_url: http://canchaya.test/api
+    token: ""
+    court_id: "1"
+    reservation_id: "1"
+    payment_id: "1"
+    review_id: "1"
+    schedule_id: "1"
