@@ -36,8 +36,6 @@ class _ReservationsScreenState extends State<ReservationsScreen>
     super.dispose();
   }
 
-  /// Se llama cuando el usuario vuelve a esta pantalla después de haber
-  /// navegado a otra ruta encima (ej. crear una reserva y volver).
   @override
   void didPopNext() {
     _load();
@@ -141,35 +139,78 @@ class _ReservationsScreenState extends State<ReservationsScreen>
               final r = reservations[index];
               return Card(
                 margin: const EdgeInsets.only(bottom: 12),
-                child: ListTile(
-                  contentPadding: const EdgeInsets.all(12),
-                  title: Text(r.court?.name ?? 'Cancha'),
-                  subtitle: Text(
-                    '${formatter.format(r.startDatetime)} — ${DateFormat('HH:mm').format(r.endDatetime)}\n'
-                    '\$${r.totalPrice.toStringAsFixed(0)}',
-                  ),
-                  isThreeLine: true,
-                  trailing: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.end,
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Chip(
-                        label: Text(
-                          r.status,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                          ),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              r.court?.name ?? 'Cancha',
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              '${formatter.format(r.startDatetime)} — '
+                              '${DateFormat('HH:mm').format(r.endDatetime)}',
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
+                            Text(
+                              '\$${r.totalPrice.toStringAsFixed(0)}',
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
+                          ],
                         ),
-                        backgroundColor: _statusColor(r.status),
-                        padding: EdgeInsets.zero,
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
-                      if (r.status == 'pendiente')
-                        TextButton(
-                          onPressed: () => _cancel(r),
-                          child: const Text('Cancelar'),
-                        ),
+                      const SizedBox(width: 8),
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: _statusColor(r.status),
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: Text(
+                              r.status,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                          if (r.status == 'pendiente')
+                            Padding(
+                              padding: const EdgeInsets.only(top: 6),
+                              child: OutlinedButton(
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: Colors.red,
+                                  side: const BorderSide(color: Colors.red),
+                                  minimumSize: Size.zero,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 4,
+                                  ),
+                                  tapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
+                                ),
+                                onPressed: () => _cancel(r),
+                                child: const Text(
+                                  'Cancelar',
+                                  style: TextStyle(fontSize: 12),
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
                     ],
                   ),
                 ),
