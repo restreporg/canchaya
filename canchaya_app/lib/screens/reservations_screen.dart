@@ -94,6 +94,111 @@ class _ReservationsScreenState extends State<ReservationsScreen>
     }
   }
 
+  void _showDetail(Reservation r, DateFormat formatter) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  margin: const EdgeInsets.only(bottom: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      r.court?.name ?? 'Cancha',
+                      style: Theme.of(context).textTheme.headlineSmall,
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: _statusColor(r.status),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Text(
+                      r.status,
+                      style: const TextStyle(color: Colors.white, fontSize: 12),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              _detailRow(
+                Icons.sports,
+                r.court?.type ?? '—',
+              ),
+              if (r.court?.location != null)
+                _detailRow(Icons.location_on_outlined, r.court!.location!),
+              _detailRow(
+                Icons.calendar_today,
+                formatter.format(r.startDatetime),
+              ),
+              _detailRow(
+                Icons.access_time,
+                '${DateFormat('HH:mm').format(r.startDatetime)} — '
+                '${DateFormat('HH:mm').format(r.endDatetime)}',
+              ),
+              _detailRow(
+                Icons.payments_outlined,
+                '\$${r.totalPrice.toStringAsFixed(0)}',
+              ),
+              const SizedBox(height: 20),
+              if (r.status == 'pendiente')
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.red,
+                      side: const BorderSide(color: Colors.red),
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                      _cancel(r);
+                    },
+                    child: const Text('Cancelar reserva'),
+                  ),
+                ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _detailRow(IconData icon, String text) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Row(
+        children: [
+          Icon(icon, size: 18, color: Colors.grey[600]),
+          const SizedBox(width: 8),
+          Expanded(child: Text(text)),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
@@ -187,6 +292,22 @@ class _ReservationsScreenState extends State<ReservationsScreen>
                               ),
                             ),
                           ),
+                          const SizedBox(height: 6),
+                          OutlinedButton(
+                            style: OutlinedButton.styleFrom(
+                              minimumSize: Size.zero,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 4,
+                              ),
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            ),
+                            onPressed: () => _showDetail(r, formatter),
+                            child: const Text(
+                              'Ver detalle',
+                              style: TextStyle(fontSize: 12),
+                            ),
+                          ),
                           if (r.status == 'pendiente')
                             Padding(
                               padding: const EdgeInsets.only(top: 6),
@@ -195,11 +316,18 @@ class _ReservationsScreenState extends State<ReservationsScreen>
                                   foregroundColor: Colors.red,
                                   side: const BorderSide(color: Colors.red),
                                   minimumSize: Size.zero,
-                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 4,
+                                  ),
+                                  tapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
                                 ),
                                 onPressed: () => _cancel(r),
-                                child: const Text('Cancelar', style: TextStyle(fontSize: 12)),
+                                child: const Text(
+                                  'Cancelar',
+                                  style: TextStyle(fontSize: 12),
+                                ),
                               ),
                             ),
                         ],
