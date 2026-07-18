@@ -195,11 +195,18 @@ class _ReservationsScreenState extends State<ReservationsScreen>
                                   foregroundColor: Colors.red,
                                   side: const BorderSide(color: Colors.red),
                                   minimumSize: Size.zero,
-                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 4,
+                                  ),
+                                  tapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
                                 ),
                                 onPressed: () => _cancel(r),
-                                child: const Text('Cancelar', style: TextStyle(fontSize: 12)),
+                                child: const Text(
+                                  'Cancelar',
+                                  style: TextStyle(fontSize: 12),
+                                ),
                               ),
                             ),
                         ],
