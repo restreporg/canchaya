@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import 'courts_screen.dart';
 import 'reservations_screen.dart';
+import '../main.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -23,7 +24,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(_titles[_index]),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.sports_soccer, color: AppColors.verde),
+            const SizedBox(width: 8),
+            Text(_titles[_index]),
+          ],
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
