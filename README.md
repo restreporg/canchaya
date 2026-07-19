@@ -1,51 +1,54 @@
 # Proyecto: CanchaYa
- Estudiantes:
- -Santiago Restrepo Santamaria.
- -Juan Diego Perez.
- -David Esnaider Quiñonez.
+
+Estudiantes:
+-Santiago Restrepo Santamaria.
+-Juan Diego Perez.
+-David Esnaider Quiñonez.
 
 # Descripción
+
 Canchaya es una plataforma web de reservas de canchas deportivas desarrollada en Laravel.
 Permite a los clientes explorar canchas disponibles filtradas por deporte y ubicación, realizar reservas, efectuar pagos y dejar reseñas.
 Los administradores cuentan con un panel completo para gestionar canchas, horarios, reservas, pagos y reseñas.
 
-
 # Tablas implementadas y sus relaciones
 
 # Tablas
-| Tabla | Descripción |
-|-------|-------------|
-| `users` | Usuarios del sistema (admin y clientes) |
-| `courts` | Canchas deportivas disponibles |
-| `schedules` | Horarios de disponibilidad por cancha |
-| `reservations` | Reservas realizadas por los clientes |
-| `payments` | Pagos asociados a cada reserva |
-| `reviews` | Reseñas dejadas por los clientes |
+
+| Tabla          | Descripción                             |
+| -------------- | --------------------------------------- |
+| `users`        | Usuarios del sistema (admin y clientes) |
+| `courts`       | Canchas deportivas disponibles          |
+| `schedules`    | Horarios de disponibilidad por cancha   |
+| `reservations` | Reservas realizadas por los clientes    |
+| `payments`     | Pagos asociados a cada reserva          |
+| `reviews`      | Reseñas dejadas por los clientes        |
 
 # Relaciones
-| Modelo | Relación | Modelo relacionado |
-|--------|----------|--------------------|
-| User | hasMany | Reservations |
-| User | hasMany | Payments |
-| User | hasMany | Reviews |
-| Court | hasMany | Schedules |
-| Court | hasMany | Reservations |
-| Reservation | belongsTo | User |
-| Reservation | belongsTo | Court |
-| Reservation | hasOne | Payment |
-| Reservation | hasOne | Review |
-| Payment | belongsTo | Reservation |
-| Payment | belongsTo | User |
-| Review | belongsTo | Reservation |
-| Review | belongsTo | User |
-| Schedule | belongsTo | Court |
+
+| Modelo      | Relación  | Modelo relacionado |
+| ----------- | --------- | ------------------ |
+| User        | hasMany   | Reservations       |
+| User        | hasMany   | Payments           |
+| User        | hasMany   | Reviews            |
+| Court       | hasMany   | Schedules          |
+| Court       | hasMany   | Reservations       |
+| Reservation | belongsTo | User               |
+| Reservation | belongsTo | Court              |
+| Reservation | hasOne    | Payment            |
+| Reservation | hasOne    | Review             |
+| Payment     | belongsTo | Reservation        |
+| Payment     | belongsTo | User               |
+| Review      | belongsTo | Reservation        |
+| Review      | belongsTo | User               |
+| Schedule    | belongsTo | Court              |
 
 ---
 
-
-# Instrucciones para correr localmente
+# Instrucciones para correr localmente (Backend - Laravel)
 
 # Requisitos
+
 - PHP 8.2+
 - Composer
 - Node.js
@@ -56,30 +59,35 @@ Los administradores cuentan con un panel completo para gestionar canchas, horari
 
 (BASH)
 
-1. Clonar el repositorio 
+1. Clonar el repositorio
+
 ```
-git clone 
+git clone
 cd canchaya
 ```
 
 2. Instalar dependencias
+
 ```
 composer install
 npm install
 ```
 
 3. Configurar el archivo de entorno
+
 ```
 cp .env.example .env
 php artisan key:generate
 ```
 
 4. Ejecutar migraciones y seeders
+
 ```
 php artisan migrate:fresh --seed
 ```
 
 5. Levantar el servidor
+
 ```
 php artisan serve
 ```
@@ -87,22 +95,93 @@ php artisan serve
 6. Entrar en el navegador al localhost
 
 # Credenciales de prueba
-| Rol | Email | Contraseña |
-|-----|-------|------------|
-| Admin | admin@canchaya.com | password |
-| Cliente | carlos@gmail.com | password |
 
+| Rol     | Email              | Contraseña |
+| ------- | ------------------ | ---------- |
+| Admin   | admin@canchaya.com | password   |
+| Cliente | carlos@gmail.com   | password   |
+
+---
+
+# Instrucciones para correr localmente (App móvil - Flutter)
+
+La app móvil (`canchaya_app`) consume la API REST del backend, por lo que primero debes tener el servidor de Laravel corriendo (ver sección anterior).
+
+# Requisitos
+
+- [Flutter SDK](https://docs.flutter.dev/get-started/install) (versión estable más reciente)
+- Android Studio (para emulador Android y/o SDK de Android) y/o Xcode (para iOS, solo en macOS)
+- Un editor recomendado: VS Code con las extensiones de Flutter y Dart
+- Verificar que el entorno esté correctamente configurado con:
+
+```
+flutter doctor
+```
+
+# Pasos
+
+(BASH)
+
+1. Entrar a la carpeta del proyecto móvil
+
+```
+cd canchaya_app
+```
+
+2. Instalar las dependencias del proyecto
+
+```
+flutter pub get
+```
+
+3. Configurar la URL de la API
+    - Ubica el archivo donde se define la URL base de conexión al backend (por ejemplo `lib/config/api_config.dart` o `.env`, según cómo esté estructurado el proyecto).
+    - Actualiza la URL para que apunte a tu servidor local, por ejemplo:
+        ```
+        https://canchaya.test/api
+        ```
+        o si usas `php artisan serve`:
+        ```
+        http://127.0.0.1:8000/api
+        ```
+    - Si vas a probar en un emulador Android, recuerda que `localhost` del computador equivale a `10.0.2.2` desde el emulador.
+
+4. Verificar dispositivos disponibles (emulador o dispositivo físico conectado)
+
+```
+flutter devices
+```
+
+5. Ejecutar la aplicación
+
+```
+flutter run
+```
+
+6. (Opcional) Generar el instalable (APK) para Android
+
+```
+flutter build apk --release
+```
+
+El archivo resultante se genera en `build/app/outputs/flutter-apk/app-release.apk`.
+
+# Credenciales de prueba
+
+Las mismas credenciales usadas en el backend (ver tabla anterior) sirven para iniciar sesión desde la app móvil.
 
 ---
 
 # Lógica de negocio
 
 # Roles
+
 -Admin — gestiona toda la plataforma: canchas, horarios, reservas, pagos y reseñas.
 
 -Cliente — puede explorar canchas, hacer reservas, pagar y dejar reseñas.
 
 # Flujo de una reserva
+
 1. El cliente selecciona una cancha filtrando por deporte o ubicación.
 2. Elige fecha y hora de inicio y fin.
 3. El sistema verifica que no haya conflictos con otras reservas en ese horario.
@@ -113,20 +192,23 @@ php artisan serve
 8. El cliente puede dejar una reseña con calificación de 1 a 5 estrellas.
 
 # Estados de una reserva
-| Estado | Descripción |
-|--------|-------------|
-| `pendiente` | Reserva creada, sin pago |
-| `confirmada` | Pago realizado |
-| `completada` | Reserva finalizada |
-| `cancelada` | Cancelada por el cliente o el admin |
+
+| Estado       | Descripción                         |
+| ------------ | ----------------------------------- |
+| `pendiente`  | Reserva creada, sin pago            |
+| `confirmada` | Pago realizado                      |
+| `completada` | Reserva finalizada                  |
+| `cancelada`  | Cancelada por el cliente o el admin |
 
 # Reglas importantes
+
 - Un cliente solo puede ver y cancelar sus propias reservas.
 - Solo se pueden reseñar reservas con estado "completada".
 - No se permiten reservas en horarios ya ocupados.
 - El admin puede cambiar el estado de cualquier reserva manualmente.
 
 # Protección de rutas
+
 - "/admin/" — requiere estar autenticado y tener "role = admin".
 - "/client/" — requiere estar autenticado.
 - Un cliente no puede acceder a reservas de otros clientes (Policy)
@@ -145,50 +227,50 @@ Este proyecto incluye una colección de Insomnia (`Reservas Canchas API`) con to
 4. Verifica que aparezcan las carpetas: `01 - Público`, `02 - Cliente` y `03 - Admin` (según corresponda) con sus respectivos requests.
 
 ## 2. Configurar el entorno base (Base Environment)
+
 (PARA EJECUTAR LA API REST SE DEBE HACER LAS PRUEBAS CON EL SERVIDOR DE LARAVEL HERD)
 
 1. Haz clic en `Base Environment` en la parte superior del workspace.
 2. Define al menos las siguientes variables:
-   ```json
-   {
-     "base_url": "https://canchaya.test/api",
-     "token": ""
-   }
-   ```
+    ```json
+    {
+        "base_url": "https://canchaya.test/api",
+        "token": ""
+    }
+    ```
 3. Deja `token` vacío por ahora; se llenará automáticamente en el paso siguiente.
 4. En cada request, la URL debe usar la variable, por ejemplo: `{{ _.base_url }}/reservations`.
-
 
 ## 3. Obtener el token (Login)
 
 1. Levanta el servidor local con `php artisan serve`.
 2. En la carpeta `1. Autenticación`, abre el request **`2. Login`**.
 3. En el `Body` (normalmente `JSON`), ingresa las credenciales de prueba, por ejemplo:
-   ```json
-   {
-     "email": "carlos@gmail.com",
-     "password": "password"
-   }
-   ```
+    ```json
+    {
+        "email": "carlos@gmail.com",
+        "password": "password"
+    }
+    ```
 4. Presiona `Send`. Si Laravel usa Sanctum/Passport, la respuesta traerá algo como:
-   ```json
-   {
-     "user": { "id": 1, "name": "Carlos", "role": "cliente" },
-     "token": "1|AbCdEf123456..."
-   }
-   ```
+    ```json
+    {
+        "user": { "id": 1, "name": "Carlos", "role": "cliente" },
+        "token": "1|AbCdEf123456..."
+    }
+    ```
 5. **Copia el valor de `token`** (sin las comillas).
 
 ## 4. Guardar el token en el entorno (para no pegarlo en cada request)
 
 1. Vuelve a `Base Environment` (o crea un `Environment` específico como "Cliente" o "Admin" si vas a probar ambos roles).
 2. Pega el valor copiado en la variable `token`:
-   ```json
-   {
-     "base_url": "https://canchaya.test/api",
-     "token": "1|AbCdEf123456..."
-   }
-   ```
+    ```json
+    {
+        "base_url": "https://canchaya.test/api",
+        "token": "1|AbCdEf123456..."
+    }
+    ```
 3. Guarda los cambios.
 
 > 💡 **Tip:** también puedes automatizar esto usando un script en la pestaña `Tests`/`After Response` del request de Login para que Insomnia guarde el token automáticamente en la variable de entorno cada vez que hagas login, sin copiar y pegar manualmente.
@@ -211,6 +293,7 @@ Si prefieres no configurar `Auth` en cada request individualmente, puedes defini
 ## 7. Probar con distintos roles
 
 Como el proyecto maneja roles (`admin` y `cliente`), se recomienda:
+
 - Crear **dos entornos distintos** en Insomnia (`Entorno Cliente` y `Entorno Admin`), cada uno con su propio `token`.
 - Iniciar sesión con las credenciales correspondientes de la tabla de credenciales de prueba y guardar el token en el entorno correspondiente.
 - Cambiar de entorno desde el selector superior (`Base Environment`) según qué rol quieras probar.
@@ -223,12 +306,10 @@ Como el proyecto maneja roles (`admin` y `cliente`), se recomienda:
 
 <img width="1919" height="971" alt="Captura de pantalla 2026-07-11 202655" src="https://github.com/user-attachments/assets/91c6e812-8a98-4061-b358-83c3f950481e" />
 
-
 # Loggins (register, iniciar sesion)
 
 <img width="1919" height="1020" alt="Captura de pantalla 2026-07-11 202715" src="https://github.com/user-attachments/assets/b406a045-6783-4bc4-b6d1-93650e598b50" />
 <img width="1899" height="1017" alt="Captura de pantalla 2026-07-11 202727" src="https://github.com/user-attachments/assets/442d3367-9892-4660-801f-07b839cee243" />
-
 
 # Apartado de Admin
 
@@ -237,8 +318,7 @@ Como el proyecto maneja roles (`admin` y `cliente`), se recomienda:
 <img width="1919" height="1023" alt="Captura de pantalla 2026-07-11 204043" src="https://github.com/user-attachments/assets/d99ad35c-4b8a-4d5e-bb97-697729de8915" />
 <img width="1917" height="900" alt="Captura de pantalla 2026-07-11 204116" src="https://github.com/user-attachments/assets/8a7f9104-ae28-4156-b494-deb089bb67e2" />
 
-
-# Apartado de cliente 
+# Apartado de cliente
 
 <img width="1919" height="970" alt="Captura de pantalla 2026-07-11 204218" src="https://github.com/user-attachments/assets/a463faa5-1863-445d-a3bb-c9a0f5e820fa" />
 <img width="1917" height="961" alt="Captura de pantalla 2026-07-11 204158" src="https://github.com/user-attachments/assets/8e896fbb-090b-43ec-ad33-a8bd3324b7ad" />
