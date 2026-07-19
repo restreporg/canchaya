@@ -39,6 +39,63 @@
             color: #fff;
         }
         .text-verde { color: var(--verde) !important; }
+
+        /* Cómo funciona */
+        .step-number {
+            width: 56px; height: 56px; border-radius: 50%;
+            background: var(--verde);
+            color: #fff;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; font-weight: 800;
+            margin: 0 auto 1.25rem auto;
+        }
+        .step-connector {
+            display: none;
+        }
+        @media (min-width: 768px) {
+            .step-connector {
+                display: block;
+                position: absolute;
+                top: 28px;
+                left: 60%;
+                width: 80%;
+                height: 2px;
+                background: repeating-linear-gradient(90deg, #cfd8d4 0 8px, transparent 8px 16px);
+                z-index: 0;
+            }
+            .step-col:last-child .step-connector { display: none; }
+        }
+        .step-col { position: relative; z-index: 1; }
+
+        /* FAQ */
+        .accordion-faq .accordion-item {
+            border: none;
+            border-radius: 12px !important;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+        .accordion-faq .accordion-button {
+            font-weight: 600;
+            background: #fff;
+        }
+        .accordion-faq .accordion-button:not(.collapsed) {
+            background: rgba(29,185,84,0.08);
+            color: var(--verde-oscuro);
+            box-shadow: none;
+        }
+        .accordion-faq .accordion-button:focus {
+            box-shadow: none;
+            border-color: rgba(29,185,84,0.25);
+        }
+        .accordion-faq .accordion-button::after {
+            filter: invert(48%) sepia(89%) saturate(419%) hue-rotate(93deg) brightness(93%) contrast(92%);
+        }
+
+        /* CTA final */
+        .cta-final {
+            background: linear-gradient(135deg, var(--verde-oscuro) 0%, var(--verde-dark) 100%);
+            border-radius: 24px;
+        }
     </style>
 </head>
 <body>
@@ -145,6 +202,142 @@
                         <p class="text-muted mb-0">Paga con efectivo, tarjeta o transferencia de forma rápida y segura.</p>
                     </div>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    {{-- Cómo funciona --}}
+    <section class="py-6" style="padding: 80px 0;">
+        <div class="container">
+            <h2 class="text-center fw-bold mb-2">¿Cómo funciona?</h2>
+            <p class="text-center text-muted mb-5">Reservar tu cancha nunca fue tan simple</p>
+
+            <div class="row g-4 text-center">
+                <div class="col-md-4 step-col">
+                    <div class="step-connector"></div>
+                    <div class="step-number">1</div>
+                    <h5 class="fw-bold">Busca tu cancha</h5>
+                    <p class="text-muted mb-0">Filtra por deporte, ubicación y fecha para encontrar la opción ideal.</p>
+                </div>
+                <div class="col-md-4 step-col">
+                    <div class="step-connector"></div>
+                    <div class="step-number">2</div>
+                    <h5 class="fw-bold">Elige tu horario</h5>
+                    <p class="text-muted mb-0">Consulta la disponibilidad en tiempo real y selecciona el horario que más te convenga.</p>
+                </div>
+                <div class="col-md-4 step-col">
+                    <div class="step-number">3</div>
+                    <h5 class="fw-bold">Confirma y juega</h5>
+                    <p class="text-muted mb-0">Paga de forma segura y recibe la confirmación al instante. ¡Listo para jugar!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {{-- FAQ --}}
+    <section class="py-6 bg-light" style="padding: 80px 0;">
+        <div class="container">
+            <h2 class="text-center fw-bold mb-2">Preguntas frecuentes</h2>
+            <p class="text-center text-muted mb-5">Resolvemos las dudas más comunes sobre Canchaya</p>
+
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="accordion accordion-faq" id="faqAccordion">
+
+                        <div class="accordion-item shadow-sm">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                    ¿Cómo reservo una cancha?
+                                </button>
+                            </h2>
+                            <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body text-muted">
+                                    Regístrate, elige el deporte y la ubicación, selecciona la cancha y el horario disponible, y confirma tu pago. Recibirás la confirmación al instante.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item shadow-sm">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                    ¿Qué métodos de pago aceptan?
+                                </button>
+                            </h2>
+                            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body text-muted">
+                                    Puedes pagar con tarjeta de crédito o débito, transferencia bancaria o efectivo en el lugar, según lo que ofrezca la cancha que elijas.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item shadow-sm">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                    ¿Puedo cancelar o cambiar mi reserva?
+                                </button>
+                            </h2>
+                            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body text-muted">
+                                    Sí, puedes cancelar o reprogramar tu reserva desde la sección "Mis Reservas" siempre que lo hagas con anticipación, según la política de cada cancha.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item shadow-sm">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                                    ¿Tiene algún costo usar Canchaya?
+                                </button>
+                            </h2>
+                            <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body text-muted">
+                                    Crear tu cuenta y buscar canchas es totalmente gratis. Solo pagas el valor de la reserva al momento de confirmarla.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item shadow-sm">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq5">
+                                    ¿Necesito descargar la app para reservar?
+                                </button>
+                            </h2>
+                            <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body text-muted">
+                                    No es obligatorio, puedes reservar desde el navegador. Sin embargo, la app te permite recibir notificaciones y gestionar tus reservas más fácilmente.
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {{-- CTA final --}}
+    <section class="py-6" style="padding: 80px 0;">
+        <div class="container">
+            <div class="cta-final text-center text-white py-5 px-4">
+                <h2 class="fw-bold mb-3">¿Listo para reservar tu cancha?</h2>
+                <p class="text-white-50 mb-4 mx-auto" style="max-width: 500px;">
+                    Únete a miles de usuarios que ya reservan sus canchas favoritas en segundos.
+                </p>
+                @auth
+                    @if(auth()->user()->role === 'admin')
+                        <a href="{{ route('admin.dashboard') }}" class="btn btn-light btn-lg px-5">
+                            <i class="bi bi-speedometer2 me-2"></i>Ir al panel
+                        </a>
+                    @else
+                        <a href="{{ route('client.reservations.create') }}" class="btn btn-light btn-lg px-5">
+                            <i class="bi bi-lightning-charge me-2"></i>Reservar ahora
+                        </a>
+                    @endif
+                @else
+                    <a href="{{ route('register') }}" class="btn btn-light btn-lg px-5">
+                        <i class="bi bi-lightning-charge me-2"></i>Crear cuenta gratis
+                    </a>
+                @endauth
             </div>
         </div>
     </section>

@@ -67,6 +67,9 @@
                         </a>
                     @endif
                 @else
+                    <a href="/downloads/canchaya.apk" class="btn btn-outline-light btn-sm" download>
+                        <i class="bi bi-download me-1"></i>Descargar App
+                    </a>
                     <a href="{{ route('login') }}" class="btn btn-outline-light btn-sm">
                         <i class="bi bi-box-arrow-in-right me-1"></i>Iniciar sesión
                     </a>
